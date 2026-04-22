@@ -155,7 +155,15 @@
                     </div>
                     <div class="form-group">
                         <label class="field-label">Hotel</label>
-                        <input class="field-input" type="text" name="hotel" required value="<?= htmlspecialchars((string) ($formSource['hotel'] ?? '')) ?>">
+                        <?php $selectedHotel = (string) ($formSource['hotel'] ?? ''); ?>
+                        <select class="field-input" name="hotel" required>
+                            <option value="">-- Choisir un hotel --</option>
+                            <?php foreach (($hotels ?? []) as $hotelName): ?>
+                                <option value="<?= htmlspecialchars((string) $hotelName) ?>" <?= $selectedHotel === $hotelName ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars((string) $hotelName) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="field-label">Chanteur / artiste</label>

@@ -6,14 +6,17 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Models\EventModel;
+use App\Models\ReservationModel;
 
 final class EventAdminController extends Controller
 {
     private EventModel $events;
+    private ReservationModel $reservations;
 
     public function __construct()
     {
         $this->events = new EventModel();
+        $this->reservations = new ReservationModel();
     }
 
     public function index(): void
@@ -91,6 +94,7 @@ final class EventAdminController extends Controller
 
         $editId = (int) ($_GET['edit'] ?? 0);
         $editingEvent = $editId > 0 ? $this->events->findById($editId) : null;
+        $hotels = array_keys($this->reservations->getTarifs());
 
         $this->view('event/index', [
             'success' => $success,
@@ -98,6 +102,7 @@ final class EventAdminController extends Controller
             'events' => $this->events->findAll(),
             'editing_event' => $editingEvent,
             'old' => $old,
+            'hotels' => $hotels,
         ]);
     }
 
@@ -116,6 +121,8 @@ final class EventAdminController extends Controller
 
     private function validatePayload(array $payload): string
     {
+        $allowedHotels = array_keys($this->reservations->getTarifs());
+
         if (
             $payload['titre'] === '' ||
             $payload['hotel'] === '' ||
@@ -129,6 +136,10 @@ final class EventAdminController extends Controller
 
         if ($payload['date_fin'] < $payload['date_debut']) {
             return 'La date de fin doit etre superieure ou egale a la date de debut.';
+        }
+
+        if (!in_array($payload['hotel'], $allowedHotels, true)) {
+            return 'Veuillez choisir un hotel valide dans la liste.';
         }
 
         if ($payload['image_url'] !== '' && filter_var($payload['image_url'], FILTER_VALIDATE_URL) === false) {
