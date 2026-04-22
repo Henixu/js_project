@@ -5,20 +5,37 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Models\EventModel;
 use App\Models\ReservationModel;
 
 final class DashboardController extends Controller
 {
     private ReservationModel $reservations;
+    private EventModel $events;
 
     public function __construct()
     {
         $this->reservations = new ReservationModel();
+        $this->events = new EventModel();
     }
 
     public function index(): void
     {
         $this->requireAdmin();
+
+        $eventSuccess = (string) ($_SESSION['flash_event_success'] ?? '');
+        $eventError = (string) ($_SESSION['flash_event_error'] ?? '');
+        unset($_SESSION['flash_event_success'], $_SESSION['flash_event_error']);
+
+        $eventOld = [
+            'titre' => '',
+            'hotel' => '',
+            'chanteur' => '',
+            'date_debut' => '',
+            'date_fin' => '',
+            'description' => '',
+            'image_url' => '',
+        ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['statut'], $_POST['id'])) {
             $allowedStatus = ['en_attente', 'confirmee', 'annulee'];
@@ -32,6 +49,46 @@ final class DashboardController extends Controller
             $this->redirect('dashboard');
         }
 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string) ($_POST['event_action'] ?? '') === 'create') {
+            $eventOld = [
+                'titre' => trim((string) ($_POST['titre'] ?? '')),
+                'hotel' => trim((string) ($_POST['hotel'] ?? '')),
+                'chanteur' => trim((string) ($_POST['chanteur'] ?? '')),
+                'date_debut' => (string) ($_POST['date_debut'] ?? ''),
+                'date_fin' => (string) ($_POST['date_fin'] ?? ''),
+                'description' => trim((string) ($_POST['description'] ?? '')),
+                'image_url' => trim((string) ($_POST['image_url'] ?? '')),
+            ];
+
+            if (
+                $eventOld['titre'] === '' ||
+                $eventOld['hotel'] === '' ||
+                $eventOld['chanteur'] === '' ||
+                $eventOld['date_debut'] === '' ||
+                $eventOld['date_fin'] === '' ||
+                $eventOld['description'] === ''
+            ) {
+                $eventError = 'Veuillez remplir tous les champs obligatoires de l\'evenement.';
+            } elseif ($eventOld['date_fin'] < $eventOld['date_debut']) {
+                $eventError = 'La date de fin doit etre superieure ou egale a la date de debut.';
+            } elseif ($eventOld['image_url'] !== '' && filter_var($eventOld['image_url'], FILTER_VALIDATE_URL) === false) {
+                $eventError = 'L\'URL de l\'image est invalide.';
+            } else {
+                $this->events->create(
+                    $eventOld['titre'],
+                    $eventOld['hotel'],
+                    $eventOld['chanteur'],
+                    $eventOld['date_debut'],
+                    $eventOld['date_fin'],
+                    $eventOld['description'],
+                    $eventOld['image_url'] !== '' ? $eventOld['image_url'] : null
+                );
+
+                $_SESSION['flash_event_success'] = 'Evenement ajoute avec succes.';
+                $this->redirect('dashboard');
+            }
+        }
+
         $parMois = $this->reservations->getReservationsByMonth();
         $parHotel = $this->reservations->getReservationsByHotel();
 
@@ -42,6 +99,10 @@ final class DashboardController extends Controller
             'mois_data' => json_encode(array_column($parMois, 'nb')),
             'hotel_labels' => json_encode(array_column($parHotel, 'hotel')),
             'hotel_data' => json_encode(array_column($parHotel, 'nb')),
+            'events' => $this->events->findAll(),
+            'event_success' => $eventSuccess,
+            'event_error' => $eventError,
+            'event_old' => $eventOld,
         ]);
     }
 }

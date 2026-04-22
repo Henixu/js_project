@@ -6,6 +6,8 @@ require_once __DIR__ . '/bootstrap.php';
 
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
+use App\Controllers\EventAdminController;
+use App\Controllers\EventController;
 use App\Controllers\ReservationController;
 use App\Core\Router;
 
@@ -14,6 +16,8 @@ $router = new Router();
 $authController = new AuthController();
 $reservationController = new ReservationController();
 $dashboardController = new DashboardController();
+$eventController = new EventController();
+$eventAdminController = new EventAdminController();
 
 $router->add('GET', '', static function (): void {
     if (isset($_SESSION['user_id'])) {
@@ -53,6 +57,17 @@ $router->add('GET', 'dashboard', static function () use ($dashboardController): 
 });
 $router->add('POST', 'dashboard', static function () use ($dashboardController): void {
     $dashboardController->index();
+});
+
+$router->add('GET', 'events', static function () use ($eventAdminController): void {
+    $eventAdminController->index();
+});
+$router->add('POST', 'events', static function () use ($eventAdminController): void {
+    $eventAdminController->index();
+});
+
+$router->add('GET', 'events-feed', static function () use ($eventController): void {
+    $eventController->feed();
 });
 
 $route = trim((string) ($_GET['route'] ?? ''), '/');

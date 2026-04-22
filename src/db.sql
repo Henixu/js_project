@@ -22,6 +22,18 @@ CREATE TABLE IF NOT EXISTS reservations (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(180) NOT NULL,
+    hotel VARCHAR(120) NOT NULL,
+    chanteur VARCHAR(120) NOT NULL,
+    date_debut DATE NOT NULL,
+    date_fin DATE NOT NULL,
+    description TEXT NOT NULL,
+    image_url VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Admin par défaut (mot de passe: admin123)
 INSERT IGNORE INTO users (nom, prenom, email, password, role)
 VALUES ('Admin', 'Seabel', 'admin@seabel.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');

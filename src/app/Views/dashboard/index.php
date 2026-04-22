@@ -76,9 +76,57 @@
         .statut-form select { padding: 5px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; cursor: pointer; }
         .statut-form button { padding: 5px 10px; background: #0f3460; color: white; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; margin-left: 5px; }
 
+        .events-admin-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 25px; margin-bottom: 35px; }
+        .event-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .event-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .event-form-group { display: flex; flex-direction: column; gap: 7px; }
+        .event-form-group.full { grid-column: 1 / -1; }
+        .event-label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #666; }
+        .event-input, .event-textarea {
+            padding: 10px 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            outline: none;
+        }
+        .event-input:focus, .event-textarea:focus { border-color: #0f3460; }
+        .event-textarea { min-height: 120px; resize: vertical; }
+        .event-btn {
+            padding: 12px 16px;
+            background: #0f3460;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .event-alert { padding: 10px 12px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; }
+        .event-alert-success { background: #e9f9ed; color: #14532d; border: 1px solid #bbf7d0; }
+        .event-alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .event-media { width: 54px; height: 54px; border-radius: 8px; object-fit: cover; display: block; }
+        .event-media-fallback {
+            width: 54px;
+            height: 54px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #666;
+            background: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+        }
+
         @media (max-width: 900px) {
             .sidebar { display: none; }
             .charts-grid { grid-template-columns: 1fr; }
+            .events-admin-grid { grid-template-columns: 1fr; }
+            .event-form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -90,6 +138,7 @@
         </div>
         <nav>
             <a href="<?= htmlspecialchars(app_url('dashboard')) ?>" class="active">Tableau de bord</a>
+            <a href="<?= htmlspecialchars(app_url('events')) ?>">Events</a>
             <a href="<?= htmlspecialchars(app_url('reservation')) ?>">Reservations</a>
             <a href="../index.html">Site web</a>
         </nav>
@@ -132,6 +181,96 @@
             <div class="chart-card">
                 <div class="chart-title">Repartition par hotel</div>
                 <canvas id="chartHotel" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="events-admin-grid">
+            <div class="event-card">
+                <div class="chart-title">Ajouter un evenement</div>
+
+                <?php if (!empty($event_success)): ?>
+                    <div class="event-alert event-alert-success"><?= htmlspecialchars((string) $event_success) ?></div>
+                <?php endif; ?>
+                <?php if (!empty($event_error)): ?>
+                    <div class="event-alert event-alert-error"><?= htmlspecialchars((string) $event_error) ?></div>
+                <?php endif; ?>
+
+                <form method="POST" action="<?= htmlspecialchars(app_url('dashboard')) ?>">
+                    <input type="hidden" name="event_action" value="create">
+                    <div class="event-form-grid">
+                        <div class="event-form-group full">
+                            <label class="event-label">Titre de l'evenement</label>
+                            <input class="event-input" type="text" name="titre" required value="<?= htmlspecialchars((string) ($event_old['titre'] ?? '')) ?>" placeholder="Soiree musicale seabel">
+                        </div>
+                        <div class="event-form-group">
+                            <label class="event-label">Hotel</label>
+                            <input class="event-input" type="text" name="hotel" required value="<?= htmlspecialchars((string) ($event_old['hotel'] ?? '')) ?>" placeholder="Seabel Rym Beach">
+                        </div>
+                        <div class="event-form-group">
+                            <label class="event-label">Chanteur / artiste</label>
+                            <input class="event-input" type="text" name="chanteur" required value="<?= htmlspecialchars((string) ($event_old['chanteur'] ?? '')) ?>" placeholder="Nom de l'artiste">
+                        </div>
+                        <div class="event-form-group">
+                            <label class="event-label">Date debut</label>
+                            <input class="event-input" type="date" name="date_debut" required value="<?= htmlspecialchars((string) ($event_old['date_debut'] ?? '')) ?>">
+                        </div>
+                        <div class="event-form-group">
+                            <label class="event-label">Date fin</label>
+                            <input class="event-input" type="date" name="date_fin" required value="<?= htmlspecialchars((string) ($event_old['date_fin'] ?? '')) ?>">
+                        </div>
+                        <div class="event-form-group full">
+                            <label class="event-label">Description</label>
+                            <textarea class="event-textarea" name="description" required placeholder="Details de l'evenement, programme et ambiance..."><?= htmlspecialchars((string) ($event_old['description'] ?? '')) ?></textarea>
+                        </div>
+                        <div class="event-form-group full">
+                            <label class="event-label">Image (URL)</label>
+                            <input class="event-input" type="url" name="image_url" value="<?= htmlspecialchars((string) ($event_old['image_url'] ?? '')) ?>" placeholder="https://...">
+                        </div>
+                        <div class="event-form-group full" style="align-items:flex-start;">
+                            <button class="event-btn" type="submit">Publier l'evenement</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="event-card">
+                <div class="chart-title">Evenements publies</div>
+                <?php if (empty($events)): ?>
+                    <p style="color:#8a8a8a; font-size:13px;">Aucun evenement ajoute pour le moment.</p>
+                <?php else: ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Evenement</th>
+                                <th>Dates</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($events as $event): ?>
+                                <tr>
+                                    <td>
+                                        <?php if (!empty($event['image_url'])): ?>
+                                            <img class="event-media" src="<?= htmlspecialchars((string) $event['image_url']) ?>" alt="Image evenement">
+                                        <?php else: ?>
+                                            <div class="event-media-fallback">Sans image</div>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <strong><?= htmlspecialchars((string) $event['titre']) ?></strong><br>
+                                        <small style="color:#666;"><?= htmlspecialchars((string) $event['hotel']) ?> - <?= htmlspecialchars((string) $event['chanteur']) ?></small><br>
+                                        <?php $description = (string) $event['description']; ?>
+                                        <small style="color:#9b9b9b;"><?= htmlspecialchars(strlen($description) > 90 ? substr($description, 0, 90) . '...' : $description) ?></small>
+                                    </td>
+                                    <td>
+                                        <?= date('d/m/Y', strtotime((string) $event['date_debut'])) ?><br>
+                                        <small style="color:#666;">au <?= date('d/m/Y', strtotime((string) $event['date_fin'])) ?></small>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
         </div>
 
