@@ -29,15 +29,18 @@ final class ReservationController extends Controller
             $arrivee = $_POST['date_arrivee'] ?? '';
             $depart = $_POST['date_depart'] ?? '';
             $nbPers = (int) ($_POST['nb_personnes'] ?? 1);
+            $userId = (int) $_SESSION['user_id'];
 
-            if ($hotel === '' || $chambre === '' || $arrivee === '' || $depart === '') {
+            if ($this->reservations->hasPendingReservation($userId)) {
+                $error = 'Vous avez deja une reservation en attente. Attendez la confirmation avant de creer une nouvelle reservation.';
+            } elseif ($hotel === '' || $chambre === '' || $arrivee === '' || $depart === '') {
                 $error = 'Veuillez remplir tous les champs.';
             } elseif ($depart <= $arrivee) {
                 $error = "La date de depart doit etre apres la date d'arrivee.";
             } else {
                 $calculation = $this->reservations->calculateTotal($hotel, $chambre, $arrivee, $depart);
                 $this->reservations->create(
-                    (int) $_SESSION['user_id'],
+                    $userId,
                     $hotel,
                     $chambre,
                     $arrivee,
@@ -47,18 +50,22 @@ final class ReservationController extends Controller
                 );
 
                 $success = sprintf(
-                    'Reservation confirmee ! Total : <strong>%d EUR</strong> pour %d nuit(s).',
+                    'Reservation en attente enregistree ! Total : <strong>%d EUR</strong> pour %d nuit(s).',
                     (int) $calculation['prix_total'],
                     (int) $calculation['nuits']
                 );
             }
         }
 
+        $userId = (int) $_SESSION['user_id'];
+
         $this->view('reservation/index', [
             'success' => $success,
             'error' => $error,
             'tarifs' => $this->reservations->getTarifs(),
-            'mes_reservations' => $this->reservations->findByUserId((int) $_SESSION['user_id']),
+            'mes_reservations' => $this->reservations->findByUserId($userId),
+            'has_pending_reservation' => $this->reservations->hasPendingReservation($userId),
+            'has_confirmed_reservation' => $this->reservations->hasConfirmedReservation($userId),
         ]);
     }
 }

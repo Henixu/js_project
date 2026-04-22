@@ -83,20 +83,7 @@
     </style>
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="Seabel">
-            <p>Administration</p>
-        </div>
-        <nav>
-            <a href="<?= htmlspecialchars(app_url('dashboard')) ?>" class="active">Tableau de bord</a>
-            <a href="<?= htmlspecialchars(app_url('reservation')) ?>">Reservations</a>
-            <a href="../index.html">Site web</a>
-        </nav>
-        <div class="sidebar-footer">
-            <a href="<?= htmlspecialchars(app_url('logout')) ?>">Deconnexion</a>
-        </div>
-    </aside>
+    <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <main class="main">
         <div class="page-title">Tableau de bord</div>

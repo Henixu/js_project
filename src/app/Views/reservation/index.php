@@ -95,6 +95,7 @@
         <div class="card">
             <?php if (!empty($success)): ?><div class="alert alert-success"><?= $success ?></div><?php endif; ?>
             <?php if (!empty($error)): ?><div class="alert alert-error"><?= htmlspecialchars((string) $error) ?></div><?php endif; ?>
+            <?php if (!empty($has_pending_reservation)): ?><div class="alert alert-error">Vous avez deja une reservation d'hotel en attente. Attendez la confirmation avant d'en creer une nouvelle.</div><?php endif; ?>
 
             <form method="POST" action="<?= htmlspecialchars(app_url('reservation')) ?>" id="reservForm">
                 <div class="form-grid">
@@ -129,7 +130,7 @@
                         <div class="prix-preview" id="prixPreview">Estimation : --</div>
                     </div>
                     <div class="form-group full" style="align-items: flex-start;">
-                        <button type="submit" class="btn">Confirmer la reservation</button>
+                        <button type="submit" class="btn" <?= !empty($has_pending_reservation) ? 'disabled' : '' ?>>Confirmer la reservation</button>
                     </div>
                 </div>
             </form>
@@ -150,6 +151,7 @@
                         <th>Pers.</th>
                         <th>Total</th>
                         <th>Statut</th>
+                        <th>Taxi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -166,11 +168,20 @@
                                 <?= htmlspecialchars(str_replace('_', ' ', (string) $r['statut'])) ?>
                             </span>
                         </td>
+                        <td>
+                            <?php if ($r['statut'] === 'confirmee'): ?>
+                                <a href="<?= htmlspecialchars(app_url('taxi')) ?>" class="btn" style="padding: 8px 12px; font-size: 12px;">Taxi</a>
+                                <a href="<?= htmlspecialchars(app_url('cars/rent')) ?>" class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; margin-left: 5px;">Next</a>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
             <?php endif; ?>
+
         </div>
     </div>
 

@@ -60,6 +60,48 @@ final class ReservationModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function hasPendingReservation(int $userId): bool
+    {
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM reservations WHERE user_id = ? AND statut = ?');
+        $stmt->execute([$userId, 'en_attente']);
+
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    public function hasConfirmedReservation(int $userId): bool
+    {
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM reservations WHERE user_id = ? AND statut = ?');
+        $stmt->execute([$userId, 'confirmee']);
+
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    public function getLastConfirmedReservation(int $userId): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM reservations WHERE user_id = ? AND statut = ? ORDER BY created_at DESC LIMIT 1');
+        $stmt->execute([$userId, 'confirmee']);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
+    }
+
+    public function findConfirmedByUserId(int $userId): array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM reservations WHERE user_id = ? AND statut = ? ORDER BY date_arrivee DESC');
+        $stmt->execute([$userId, 'confirmee']);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getConfirmedReservationById(int $userId, int $reservationId): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM reservations WHERE user_id = ? AND id = ? AND statut = ?');
+        $stmt->execute([$userId, $reservationId, 'confirmee']);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
+    }
+
     public function getDashboardStats(): array
     {
         return $this->pdo->query(
