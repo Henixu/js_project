@@ -9,15 +9,24 @@ use App\Controllers\DashboardController;
 use App\Controllers\EventAdminController;
 use App\Controllers\EventController;
 use App\Controllers\ReservationController;
+use App\Controllers\TaxiReservationController;
+use App\Controllers\CarController;
+use App\Controllers\CarRentalController;
 use App\Core\Router;
 
 $router = new Router();
 
 $authController = new AuthController();
 $reservationController = new ReservationController();
+$taxiController = new TaxiReservationController();
 $dashboardController = new DashboardController();
+<<<<<<< HEAD
 $eventController = new EventController();
 $eventAdminController = new EventAdminController();
+=======
+$carController = new CarController();
+$carRentalController = new CarRentalController();
+>>>>>>> aziz
 
 $router->add('GET', '', static function (): void {
     if (isset($_SESSION['user_id'])) {
@@ -52,6 +61,22 @@ $router->add('POST', 'reservation', static function () use ($reservationControll
     $reservationController->index();
 });
 
+$router->add('GET', 'taxi', static function () use ($taxiController): void {
+    $taxiController->index();
+});
+$router->add('POST', 'taxi', static function () use ($taxiController): void {
+    $taxiController->index();
+});
+$router->add('GET', 'taxi/edit', static function () use ($taxiController): void {
+    $taxiController->edit();
+});
+$router->add('POST', 'taxi/edit', static function () use ($taxiController): void {
+    $taxiController->edit();
+});
+$router->add('POST', 'taxi/delete', static function () use ($taxiController): void {
+    $taxiController->delete();
+});
+
 $router->add('GET', 'dashboard', static function () use ($dashboardController): void {
     $dashboardController->index();
 });
@@ -68,6 +93,48 @@ $router->add('POST', 'events', static function () use ($eventAdminController): v
 
 $router->add('GET', 'events-feed', static function () use ($eventController): void {
     $eventController->feed();
+$router->add('GET', 'dashboard/taxis', static function () use ($dashboardController): void {
+    $dashboardController->taxis();
+});
+
+$router->add('GET', 'dashboard/rentals', static function () use ($dashboardController): void {
+    $dashboardController->rentals();
+});
+
+$router->add('POST', 'dashboard/rentals', static function () use ($dashboardController): void {
+    $dashboardController->rentals();
+});
+
+$router->add('GET', 'cars', static function () use ($carController): void {
+    $carController->index();
+});
+$router->add('POST', 'cars', static function () use ($carController): void {
+    header('Location: ' . app_url('cars/add'));
+    exit;
+});
+$router->add('GET', 'cars/add', static function () use ($carController): void {
+    $carController->add();
+});
+$router->add('POST', 'cars/add', static function () use ($carController): void {
+    $carController->add();
+});
+$router->add('GET', 'cars/edit', static function () use ($carController): void {
+    $carController->edit();
+});
+$router->add('POST', 'cars/edit', static function () use ($carController): void {
+    $carController->edit();
+});
+$router->add('POST', 'cars/delete', static function () use ($carController): void {
+    $carController->delete();
+});
+$router->add('GET', 'cars/rent', static function () use ($carRentalController): void {
+    $carRentalController->index();
+});
+$router->add('POST', 'cars/rent/create', static function () use ($carRentalController): void {
+    $carRentalController->create();
+});
+$router->add('GET', 'cars/rent/api/booked-dates', static function () use ($carRentalController): void {
+    $carRentalController->getBookedDates();
 });
 
 $route = trim((string) ($_GET['route'] ?? ''), '/');
