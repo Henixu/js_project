@@ -8,32 +8,22 @@
         height: 100vh;
         overflow-y: auto;
     }
-    .sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
-    .sidebar-logo img { height: 40px; filter: brightness(0) invert(1); }
-    .sidebar-logo p { font-size: 16px; font-weight: 600; }
-    .sidebar nav { display: flex; flex-direction: column; gap: 10px; }
+    .sidebar-logo { padding: 0 25px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-logo img { height: 35px; filter: brightness(0) invert(1); }
+    .sidebar-logo p { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 5px; letter-spacing: 1px; text-transform: uppercase; }
+    .sidebar nav { padding: 20px 0; flex: 1; }
     .sidebar nav a {
-        padding: 12px 15px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: rgba(255,255,255,0.8);
-        transition: background 0.3s;
-        font-size: 14px;
-    }
-    .sidebar nav a:hover { background: rgba(255,255,255,0.1); }
-    .sidebar nav a.active { background: #16213e; color: white; font-weight: 600; }
-    .sidebar-footer { position: absolute; bottom: 20px; left: 20px; right: 20px; }
-    .sidebar-footer a {
         display: block;
-        padding: 12px 15px;
-        border-radius: 8px;
+        padding: 12px 25px;
+        color: rgba(255,255,255,0.7);
         text-decoration: none;
-        color: rgba(255,255,255,0.8);
-        text-align: center;
-        background: rgba(255,255,255,0.1);
-        transition: background 0.3s;
+        font-size: 14px;
+        transition: all 0.3s ease;
     }
-    .sidebar-footer a:hover { background: rgba(255,255,255,0.2); }
+    .sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.1); color: white; border-left: 3px solid #e94560; padding-left: 22px; }
+    .sidebar-footer { padding: 20px 25px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-footer a { color: rgba(255,255,255,0.5); font-size: 12px; text-decoration: none; }
+    .sidebar-footer a:hover { color: white; }
 </style>
 
 <aside class="sidebar">
@@ -46,6 +36,8 @@
         <a href="<?= htmlspecialchars(app_url('dashboard/taxis')) ?>" <?php echo strpos($_SERVER['REQUEST_URI'], 'taxis') !== false ? 'class="active"' : ''; ?>>Taxi</a>
         <a href="<?= htmlspecialchars(app_url('cars')) ?>" <?php echo strpos($_SERVER['REQUEST_URI'], 'cars') !== false && strpos($_SERVER['REQUEST_URI'], 'rent') === false ? 'class="active"' : ''; ?>>Voitures</a>
         <a href="<?= htmlspecialchars(app_url('dashboard/rentals')) ?>" <?php echo strpos($_SERVER['REQUEST_URI'], 'rentals') !== false ? 'class="active"' : ''; ?>>Locations</a>
+        <a href="<?= htmlspecialchars(app_url('events')) ?>" <?php echo strpos($_SERVER['REQUEST_URI'], 'events') !== false ? 'class="active"' : ''; ?>>Événements</a>
+
     </nav>
     <div class="sidebar-footer">
         <a href="<?= htmlspecialchars(app_url('logout')) ?>">Deconnexion</a>

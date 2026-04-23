@@ -90,6 +90,8 @@ $router->add('POST', 'events', static function () use ($eventAdminController): v
 
 $router->add('GET', 'events-feed', static function () use ($eventController): void {
     $eventController->feed();
+});
+
 $router->add('GET', 'dashboard/taxis', static function () use ($dashboardController): void {
     $dashboardController->taxis();
 });

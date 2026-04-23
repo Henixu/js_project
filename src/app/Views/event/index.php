@@ -9,34 +9,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Montserrat', sans-serif; background: #f0f2f5; color: #333; display: flex; min-height: 100vh; }
 
-        .sidebar {
-            width: 240px;
-            background: #0f3460;
-            color: white;
-            padding: 30px 0;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar-logo { padding: 0 25px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-logo img { height: 35px; filter: brightness(0) invert(1); }
-        .sidebar-logo p { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 5px; letter-spacing: 1px; text-transform: uppercase; }
-        .sidebar nav { padding: 20px 0; flex: 1; }
-        .sidebar nav a {
-            display: block;
-            padding: 12px 25px;
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        .sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.1); color: white; border-left: 3px solid #e94560; padding-left: 22px; }
-        .sidebar-footer { padding: 20px 25px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-footer a { color: rgba(255,255,255,0.5); font-size: 12px; text-decoration: none; }
-        .sidebar-footer a:hover { color: white; }
-
-        .main { flex: 1; padding: 35px; overflow-y: auto; }
+        .main { margin-left: 250px; flex: 1; padding: 35px; overflow-y: auto; }
         .page-title { font-family: 'Playfair Display', serif; font-size: 28px; color: #0f3460; margin-bottom: 20px; }
 
         .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 24px; }
@@ -108,21 +81,7 @@
     </style>
 </head>
 <body>
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="Seabel">
-            <p>Administration</p>
-        </div>
-        <nav>
-            <a href="<?= htmlspecialchars(app_url('dashboard')) ?>">Tableau de bord</a>
-            <a href="<?= htmlspecialchars(app_url('events')) ?>" class="active">Events</a>
-            <a href="<?= htmlspecialchars(app_url('reservation')) ?>">Reservations</a>
-            <a href="../index.html">Site web</a>
-        </nav>
-        <div class="sidebar-footer">
-            <a href="<?= htmlspecialchars(app_url('logout')) ?>">Deconnexion</a>
-        </div>
-    </aside>
+    <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <main class="main">
         <div class="page-title">Gestion des events</div>

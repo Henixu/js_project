@@ -58,6 +58,10 @@
 
         .btn { padding: 14px 30px; background: #0f3460; color: white; border: none; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background 0.3s; }
         .btn:hover { background: #16213e; }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-small { padding: 6px 10px; font-size: 11px; border-radius: 6px; letter-spacing: 0.8px; text-transform: uppercase; display: inline-block; }
+        .table-action-cell { white-space: nowrap; }
 
         .alert { padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
         .alert-success { background: #efe; color: #060; border: 1px solid #9d9; }
@@ -152,6 +156,7 @@
                         <th>Total</th>
                         <th>Statut</th>
                         <th>Taxi</th>
+                        <th>Location voiture</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -168,10 +173,16 @@
                                 <?= htmlspecialchars(str_replace('_', ' ', (string) $r['statut'])) ?>
                             </span>
                         </td>
-                        <td>
+                        <td class="table-action-cell">
                             <?php if ($r['statut'] === 'confirmee'): ?>
-                                <a href="<?= htmlspecialchars(app_url('taxi')) ?>" class="btn" style="padding: 8px 12px; font-size: 12px;">Taxi</a>
-                                <a href="<?= htmlspecialchars(app_url('cars/rent')) ?>" class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; margin-left: 5px;">Next</a>
+                                <a href="<?= htmlspecialchars(app_url('taxi')) ?>" class="btn btn-small">Taxi</a>
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
+                        <td class="table-action-cell">
+                            <?php if ($r['statut'] === 'confirmee'): ?>
+                                <a href="<?= htmlspecialchars(app_url('cars/rent')) ?>" class="btn btn-secondary btn-small">Location</a>
                             <?php else: ?>
                                 -
                             <?php endif; ?>

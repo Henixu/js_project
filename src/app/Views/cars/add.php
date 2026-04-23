@@ -10,17 +10,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Montserrat', sans-serif; background: #f5f5f5; color: #333; display: flex; min-height: 100vh; }
-        .sidebar { width: 280px; background: #0f3460; color: white; display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 100; }
-        .sidebar-logo { padding: 0 25px 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-logo img { height: 35px; filter: brightness(0) invert(1); }
-        .sidebar-logo p { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 5px; letter-spacing: 1px; text-transform: uppercase; }
-        .sidebar nav { padding: 20px 0; flex: 1; }
-        .sidebar nav a { display: block; padding: 12px 25px; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; transition: all 0.3s ease; }
-        .sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.1); color: white; border-left: 3px solid #e94560; padding-left: 22px; }
-        .sidebar-footer { padding: 20px 25px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-footer a { color: rgba(255,255,255,0.5); font-size: 12px; text-decoration: none; }
-        .sidebar-footer a:hover { color: white; }
-        .main { flex: 1; margin-left: 280px; }
+        .main { flex: 1; margin-left: 250px; }
         .page-title { background: white; padding: 25px 35px; border-bottom: 1px solid #e0e0e0; font-family: 'Playfair Display', serif; font-size: 24px; color: #0f3460; }
         .content { padding: 35px; }
         .card { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 35px; }
