@@ -20,13 +20,10 @@ $authController = new AuthController();
 $reservationController = new ReservationController();
 $taxiController = new TaxiReservationController();
 $dashboardController = new DashboardController();
-<<<<<<< HEAD
 $eventController = new EventController();
 $eventAdminController = new EventAdminController();
-=======
 $carController = new CarController();
 $carRentalController = new CarRentalController();
->>>>>>> aziz
 
 $router->add('GET', '', static function (): void {
     if (isset($_SESSION['user_id'])) {
