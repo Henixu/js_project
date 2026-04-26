@@ -40,7 +40,6 @@ final class DashboardController extends Controller
             'date_debut' => '',
             'date_fin' => '',
             'description' => '',
-            'image_url' => '',
         ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['statut'], $_POST['id'])) {
@@ -63,7 +62,6 @@ final class DashboardController extends Controller
                 'date_debut' => (string) ($_POST['date_debut'] ?? ''),
                 'date_fin' => (string) ($_POST['date_fin'] ?? ''),
                 'description' => trim((string) ($_POST['description'] ?? '')),
-                'image_url' => trim((string) ($_POST['image_url'] ?? '')),
             ];
 
             if (
@@ -77,8 +75,6 @@ final class DashboardController extends Controller
                 $eventError = 'Veuillez remplir tous les champs obligatoires de l\'evenement.';
             } elseif ($eventOld['date_fin'] < $eventOld['date_debut']) {
                 $eventError = 'La date de fin doit etre superieure ou egale a la date de debut.';
-            } elseif ($eventOld['image_url'] !== '' && filter_var($eventOld['image_url'], FILTER_VALIDATE_URL) === false) {
-                $eventError = 'L\'URL de l\'image est invalide.';
             } else {
                 $this->events->create(
                     $eventOld['titre'],
@@ -87,7 +83,7 @@ final class DashboardController extends Controller
                     $eventOld['date_debut'],
                     $eventOld['date_fin'],
                     $eventOld['description'],
-                    $eventOld['image_url'] !== '' ? $eventOld['image_url'] : null
+                    null
                 );
 
                 $_SESSION['flash_event_success'] = 'Evenement ajoute avec succes.';

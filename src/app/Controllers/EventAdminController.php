@@ -10,6 +10,14 @@ use App\Models\ReservationModel;
 
 final class EventAdminController extends Controller
 {
+    private const MAX_IMAGE_SIZE_BYTES = 3145728;
+    private const ALLOWED_IMAGE_MIME_TYPES = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/gif' => 'gif',
+        'image/webp' => 'webp',
+    ];
+
     private EventModel $events;
     private ReservationModel $reservations;
 
@@ -34,7 +42,6 @@ final class EventAdminController extends Controller
             'date_debut' => '',
             'date_fin' => '',
             'description' => '',
-            'image_url' => '',
         ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -56,8 +63,11 @@ final class EventAdminController extends Controller
 
                 if ($validation !== '') {
                     $error = $validation;
-                } else {
-                    if ($action === 'create') {
+                } elseif ($action === 'create') {
+                    $upload = $this->handleImageUpload();
+                    if ($upload['error'] !== '') {
+                        $error = $upload['error'];
+                    } else {
                         $this->events->create(
                             $old['titre'],
                             $old['hotel'],
@@ -65,28 +75,35 @@ final class EventAdminController extends Controller
                             $old['date_debut'],
                             $old['date_fin'],
                             $old['description'],
-                            $old['image_url'] !== '' ? $old['image_url'] : null
+                            $upload['path']
                         );
                         $_SESSION['flash_event_success'] = 'Evenement ajoute avec succes.';
                         $this->redirect('events');
                     }
-
+                } else {
                     $id = (int) ($_POST['id'] ?? 0);
-                    if ($id <= 0 || $this->events->findById($id) === null) {
+                    $existingEvent = $id > 0 ? $this->events->findById($id) : null;
+
+                    if ($id <= 0 || $existingEvent === null) {
                         $error = 'Evenement introuvable pour la modification.';
                     } else {
-                        $this->events->update(
-                            $id,
-                            $old['titre'],
-                            $old['hotel'],
-                            $old['chanteur'],
-                            $old['date_debut'],
-                            $old['date_fin'],
-                            $old['description'],
-                            $old['image_url'] !== '' ? $old['image_url'] : null
-                        );
-                        $_SESSION['flash_event_success'] = 'Evenement modifie avec succes.';
-                        $this->redirect('events');
+                        $upload = $this->handleImageUpload((string) ($existingEvent['image_url'] ?? ''));
+                        if ($upload['error'] !== '') {
+                            $error = $upload['error'];
+                        } else {
+                            $this->events->update(
+                                $id,
+                                $old['titre'],
+                                $old['hotel'],
+                                $old['chanteur'],
+                                $old['date_debut'],
+                                $old['date_fin'],
+                                $old['description'],
+                                $upload['path']
+                            );
+                            $_SESSION['flash_event_success'] = 'Evenement modifie avec succes.';
+                            $this->redirect('events');
+                        }
                     }
                 }
             }
@@ -106,6 +123,76 @@ final class EventAdminController extends Controller
         ]);
     }
 
+    private function handleImageUpload(?string $currentImagePath = null): array
+    {
+        if (!isset($_FILES['image']) || !is_array($_FILES['image'])) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => ''];
+        }
+
+        $file = $_FILES['image'];
+        $errorCode = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+
+        if ($errorCode === UPLOAD_ERR_NO_FILE) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => ''];
+        }
+
+        if ($errorCode === UPLOAD_ERR_INI_SIZE || $errorCode === UPLOAD_ERR_FORM_SIZE) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'La taille maximale de l\'image est de 3 MB.'];
+        }
+
+        if ($errorCode !== UPLOAD_ERR_OK) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'Le televersement de l\'image a echoue.'];
+        }
+
+        $size = (int) ($file['size'] ?? 0);
+        if ($size <= 0) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'Le fichier image est invalide.'];
+        }
+
+        if ($size > self::MAX_IMAGE_SIZE_BYTES) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'La taille maximale de l\'image est de 3 MB.'];
+        }
+
+        $tmpPath = (string) ($file['tmp_name'] ?? '');
+        if ($tmpPath === '' || !is_uploaded_file($tmpPath)) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'Le fichier image est invalide.'];
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo === false) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'Impossible de verifier le type de fichier.'];
+        }
+
+        $mimeType = (string) finfo_file($finfo, $tmpPath);
+        finfo_close($finfo);
+
+        $extension = self::ALLOWED_IMAGE_MIME_TYPES[$mimeType] ?? null;
+        if ($extension === null) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'Format d\'image non supporte (JPG, PNG, GIF, WEBP).'];
+        }
+
+        $uploadDir = __DIR__ . '/../../uploads/events/';
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'Impossible de creer le dossier de televersement.'];
+        }
+
+        $filename = uniqid('event_', true) . '.' . $extension;
+        $targetPath = $uploadDir . $filename;
+
+        if (!move_uploaded_file($tmpPath, $targetPath)) {
+            return ['path' => $currentImagePath !== '' ? $currentImagePath : null, 'error' => 'Impossible d\'enregistrer l\'image sur le serveur.'];
+        }
+
+        if (is_string($currentImagePath) && $currentImagePath !== '' && str_starts_with($currentImagePath, 'uploads/events/')) {
+            $oldAbsolutePath = __DIR__ . '/../../' . $currentImagePath;
+            if (is_file($oldAbsolutePath)) {
+                @unlink($oldAbsolutePath);
+            }
+        }
+
+        return ['path' => 'uploads/events/' . $filename, 'error' => ''];
+    }
+
     private function getEventPayloadFromPost(): array
     {
         return [
@@ -115,7 +202,6 @@ final class EventAdminController extends Controller
             'date_debut' => (string) ($_POST['date_debut'] ?? ''),
             'date_fin' => (string) ($_POST['date_fin'] ?? ''),
             'description' => trim((string) ($_POST['description'] ?? '')),
-            'image_url' => trim((string) ($_POST['image_url'] ?? '')),
         ];
     }
 
@@ -140,10 +226,6 @@ final class EventAdminController extends Controller
 
         if (!in_array($payload['hotel'], $allowedHotels, true)) {
             return 'Veuillez choisir un hotel valide dans la liste.';
-        }
-
-        if ($payload['image_url'] !== '' && filter_var($payload['image_url'], FILTER_VALIDATE_URL) === false) {
-            return 'L\'URL de l\'image est invalide.';
         }
 
         return '';

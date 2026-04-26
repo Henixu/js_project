@@ -26,6 +26,8 @@ final class EventModel
         string $description,
         ?string $imageUrl
     ): void {
+        $imageUrl = $this->sanitizeUploadedImagePath($imageUrl);
+
         $stmt = $this->pdo->prepare(
             'INSERT INTO events (titre, hotel, chanteur, date_debut, date_fin, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)'
         );
@@ -34,9 +36,14 @@ final class EventModel
 
     public function findAll(): array
     {
-        return $this->pdo->query(
+        $events = $this->pdo->query(
             'SELECT * FROM events ORDER BY date_debut DESC, id DESC'
         )->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(function (array $event): array {
+            $event['image_url'] = $this->sanitizeUploadedImagePath($event['image_url'] ?? null);
+            return $event;
+        }, $events);
     }
 
     public function findById(int $id): ?array
@@ -45,7 +52,12 @@ final class EventModel
         $stmt->execute([$id]);
 
         $event = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $event === false ? null : $event;
+        if ($event === false) {
+            return null;
+        }
+
+        $event['image_url'] = $this->sanitizeUploadedImagePath($event['image_url'] ?? null);
+        return $event;
     }
 
     public function update(
@@ -58,6 +70,8 @@ final class EventModel
         string $description,
         ?string $imageUrl
     ): void {
+        $imageUrl = $this->sanitizeUploadedImagePath($imageUrl);
+
         $stmt = $this->pdo->prepare(
             'UPDATE events
              SET titre = ?, hotel = ?, chanteur = ?, date_debut = ?, date_fin = ?, description = ?, image_url = ?
@@ -84,7 +98,26 @@ final class EventModel
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(function (array $event): array {
+            $event['image_url'] = $this->sanitizeUploadedImagePath($event['image_url'] ?? null);
+            return $event;
+        }, $events);
+    }
+
+    private function sanitizeUploadedImagePath(?string $imagePath): ?string
+    {
+        if (!is_string($imagePath)) {
+            return null;
+        }
+
+        $normalized = ltrim(str_replace('\\', '/', trim($imagePath)), '/');
+        if ($normalized === '' || !str_starts_with($normalized, 'uploads/events/')) {
+            return null;
+        }
+
+        return $normalized;
     }
 
     private function ensureTableExists(): void

@@ -42,3 +42,29 @@ if (!function_exists('redirect_to')) {
         exit;
     }
 }
+
+if (!function_exists('app_asset_url')) {
+    function app_asset_url(string $path): string
+    {
+        $path = trim($path);
+        if ($path === '') {
+            return '';
+        }
+
+        $normalizedPath = str_replace('\\', '/', $path);
+
+        if (
+            preg_match('#^(?:https?:)?//#i', $normalizedPath) === 1 ||
+            str_starts_with($normalizedPath, 'data:') ||
+            str_starts_with($normalizedPath, 'blob:') ||
+            str_starts_with($normalizedPath, '/')
+        ) {
+            return $normalizedPath;
+        }
+
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '/src/index.php';
+        $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+
+        return ($basePath === '' ? '' : $basePath) . '/' . ltrim($normalizedPath, '/');
+    }
+}

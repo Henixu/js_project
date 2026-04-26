@@ -101,8 +101,9 @@
                 $isEditing = $editing_event !== null;
             ?>
 
-            <form method="POST" action="<?= htmlspecialchars(app_url('events')) ?>">
+            <form method="POST" action="<?= htmlspecialchars(app_url('events')) ?>" enctype="multipart/form-data">
                 <input type="hidden" name="event_action" value="<?= $isEditing ? 'update' : 'create' ?>">
+                <input type="hidden" name="MAX_FILE_SIZE" value="3145728">
                 <?php if ($isEditing): ?>
                     <input type="hidden" name="id" value="<?= (int) $editing_event['id'] ?>">
                 <?php endif; ?>
@@ -141,8 +142,14 @@
                         <textarea class="field-textarea" name="description" required><?= htmlspecialchars((string) ($formSource['description'] ?? '')) ?></textarea>
                     </div>
                     <div class="form-group full">
-                        <label class="field-label">Image (URL)</label>
-                        <input class="field-input" type="url" name="image_url" value="<?= htmlspecialchars((string) ($formSource['image_url'] ?? '')) ?>" placeholder="https://...">
+                        <label class="field-label">Image (fichier local, max 3 MB)</label>
+                        <input class="field-input" type="file" name="image" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
+                        <?php if ($isEditing && !empty($editing_event['image_url'])): ?>
+                            <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+                                <img class="event-media" src="<?= htmlspecialchars(app_asset_url((string) $editing_event['image_url'])) ?>" alt="Image actuelle">
+                                <small style="color:#666;">Image actuelle conservee si aucun nouveau fichier n'est choisi.</small>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="form-group full">
                         <div class="actions">
@@ -176,7 +183,7 @@
                             <tr>
                                 <td>
                                     <?php if (!empty($event['image_url'])): ?>
-                                        <img class="event-media" src="<?= htmlspecialchars((string) $event['image_url']) ?>" alt="Image event">
+                                        <img class="event-media" src="<?= htmlspecialchars(app_asset_url((string) $event['image_url'])) ?>" alt="Image event">
                                     <?php else: ?>
                                         <div class="event-media-fallback">Sans image</div>
                                     <?php endif; ?>
