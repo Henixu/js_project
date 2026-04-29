@@ -46,12 +46,13 @@ final class CarRentalModel
 
     public function findByCarId(int $carId): array
     {
+        // Aligné avec CarModel::isAvailableForPeriod : bloquer tant que la location n'est pas annulée
         $stmt = $this->pdo->prepare(
             'SELECT * FROM car_rentals
-             WHERE car_id = ? AND statut = "confirmee"
+             WHERE car_id = ? AND statut <> ?
              ORDER BY date_debut ASC'
         );
-        $stmt->execute([$carId]);
+        $stmt->execute([$carId, 'annulee']);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -74,5 +75,23 @@ final class CarRentalModel
     {
         $stmt = $this->pdo->prepare('UPDATE car_rentals SET statut = ? WHERE id = ?');
         $stmt->execute([$status, $id]);
+    }
+
+    /**
+     * Annulation par le client : uniquement ses locations, statuts en_attente ou confirmée (futur).
+     */
+    public function cancelByUser(int $rentalId, int $userId): bool
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE car_rentals SET statut = ?
+             WHERE id = ? AND user_id = ?
+             AND (
+                 statut = \'en_attente\'
+                 OR (statut = \'confirmee\' AND date_debut > CURDATE())
+             )'
+        );
+        $stmt->execute(['annulee', $rentalId, $userId]);
+
+        return $stmt->rowCount() > 0;
     }
 }

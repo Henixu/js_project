@@ -35,6 +35,41 @@ if (!function_exists('app_url')) {
     }
 }
 
+if (!function_exists('asset_url')) {
+    /**
+     * URL absolue (chemins du site) vers un fichier statique sous le dossier de index.php (ex. uploads/...).
+     */
+    function asset_url(string $path): string
+    {
+        $path = ltrim(str_replace('\\', '/', $path), '/');
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '/src/index.php';
+        $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+
+        if ($basePath === '' || $basePath === '.') {
+            return '/' . $path;
+        }
+
+        return $basePath . '/' . $path;
+    }
+}
+
+if (!function_exists('car_image_src')) {
+    /** Chemin stocké en BDD : uploads/cars/fichier.ext (ou anciennement seulement le nom du fichier). */
+    function car_image_src(?string $stored): ?string
+    {
+        if ($stored === null || $stored === '') {
+            return null;
+        }
+
+        $stored = str_replace('\\', '/', trim($stored));
+        if ($stored !== '' && strpos($stored, '/') === false) {
+            $stored = 'uploads/cars/' . $stored;
+        }
+
+        return asset_url($stored);
+    }
+}
+
 if (!function_exists('redirect_to')) {
     function redirect_to(string $route): void
     {

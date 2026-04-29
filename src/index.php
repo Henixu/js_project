@@ -132,6 +132,9 @@ $router->add('GET', 'cars/rent', static function () use ($carRentalController): 
 $router->add('POST', 'cars/rent/create', static function () use ($carRentalController): void {
     $carRentalController->create();
 });
+$router->add('POST', 'cars/rent/cancel', static function () use ($carRentalController): void {
+    $carRentalController->cancel();
+});
 $router->add('GET', 'cars/rent/api/booked-dates', static function () use ($carRentalController): void {
     $carRentalController->getBookedDates();
 });

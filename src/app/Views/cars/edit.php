@@ -7,35 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier la Voiture</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background: #f5f5f5; color: #333; display: flex; min-height: 100vh; }
-        .main { flex: 1; margin-left: 250px; }
-        .page-title { background: white; padding: 25px 35px; border-bottom: 1px solid #e0e0e0; font-family: 'Playfair Display', serif; font-size: 24px; color: #0f3460; }
-        .content { padding: 35px; }
-        .card { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 35px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        label { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #666; }
-        input, select { padding: 12px 16px; border: 1.5px solid #e0e0e0; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 14px; outline: none; transition: border-color 0.3s; }
-        input:focus, select:focus { border-color: #0f3460; }
-        .btn { padding: 12px 22px; background: linear-gradient(135deg, #0f3460 0%, #16213e 100%); color: white; border: none; border-radius: 999px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; box-shadow: 0 10px 20px rgba(15, 52, 96, 0.15); }
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 14px 24px rgba(15, 52, 96, 0.2); }
-        .btn-secondary { background: #f4f6fb; color: #0f3460; box-shadow: inset 0 0 0 1px rgba(15, 52, 96, 0.08); }
-        .btn-secondary:hover { background: #e9edf7; }
-        .btn-danger { background: #c82333; }
-        .btn-danger:hover { background: #a71d2a; }
-        .alert { padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; }
-        .alert-success { background: #e6f7e7; color: #0b4d1d; border: 1px solid #b7deb1; }
-        .alert-error { background: #fdf0f1; color: #7a1220; border: 1px solid #f4c2c6; }
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .main { margin-left: 0; }
-        }
-    </style>
+    <?php include __DIR__ . '/../partials/seabel_fonts_link.php'; ?>
+    <?php include __DIR__ . '/../partials/seabel_theme_styles.php'; ?>
 </head>
-<body>
+<body class="layout-seabel-admin">
     <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <main class="main">
@@ -93,10 +68,11 @@
                         <label>Image de la voiture</label>
                         <input type="file" name="image" accept="image/*" style="padding: 8px; border: 1.5px solid #e0e0e0; border-radius: 8px; width: 100%; box-sizing: border-box;">
                         <small style="color: #666; font-size: 12px;">Formats acceptés: JPG, PNG, GIF, WebP. Taille max: 5MB</small>
-                        <?php if (!empty($car['image'])): ?>
+                        <?php $previewImg = car_image_src($car['image'] ?? null); ?>
+                        <?php if ($previewImg !== null): ?>
                             <div style="margin-top: 10px;">
                                 <small style="color: #666;">Image actuelle:</small><br>
-                                <img src="<?= htmlspecialchars('../../uploads/cars/' . $car['image']) ?>" alt="Image actuelle" style="max-width: 200px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;">
+                                <img src="<?= htmlspecialchars($previewImg) ?>" alt="Image actuelle" style="max-width: 200px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;">
                             </div>
                         <?php endif; ?>
                     </div>

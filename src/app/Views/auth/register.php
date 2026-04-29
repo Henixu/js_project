@@ -4,43 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription - Seabel Hotels</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 50px 40px;
-            width: 100%;
-            max-width: 460px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        .logo-area { text-align: center; margin-bottom: 35px; }
-        .logo-area img { height: 50px; margin-bottom: 10px; }
-        .logo-area h1 { font-family: 'Playfair Display', serif; font-size: 22px; color: #1a1a2e; }
-        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #666; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px 16px; border: 1.5px solid #e0e0e0; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 14px; transition: border-color 0.3s; outline: none; }
-        input:focus { border-color: #0f3460; }
-        .btn { width: 100%; padding: 14px; background: #0f3460; color: white; border: none; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
-        .btn:hover { background: #16213e; }
-        .error { background: #fee; color: #c00; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; text-align: center; }
-        .success { background: #efe; color: #060; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; text-align: center; }
-        .login-link { text-align: center; margin-top: 25px; font-size: 13px; color: #666; }
-        .login-link a { color: #0f3460; font-weight: 600; text-decoration: none; }
-    </style>
+    <?php include __DIR__ . '/../partials/seabel_fonts_link.php'; ?>
+    <?php include __DIR__ . '/../partials/seabel_theme_styles.php'; ?>
 </head>
-<body>
+<body class="layout-seabel-auth">
     <div class="card">
         <div class="logo-area">
             <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="Seabel">

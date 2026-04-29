@@ -1,316 +1,83 @@
-<?php $car_types = ['economique' => 'Économique', 'compact' => 'Compact', 'berline' => 'Berline', 'suv' => 'SUV', 'luxe' => 'Luxe']; ?>
-<?php $carburants = ['essence' => 'Essence', 'diesel' => 'Diesel', 'hybride' => 'Hybride', 'electrique' => 'Électrique']; ?>
+<?php
+$statut_labels = [
+    'en_attente' => 'En attente',
+    'confirmee' => 'Confirmée',
+    'annulee' => 'Annulée',
+    'terminee' => 'Terminée',
+];
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Location de Voiture - Seabel Hotels</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background: #f5f5f5; color: #333; }
-
-        .topbar {
-            background: #0f3460;
-            color: white;
-            padding: 14px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .topbar img { height: 35px; filter: brightness(0) invert(1); }
-        .topbar-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
-        .topbar-right a { color: rgba(255,255,255,0.8); text-decoration: none; }
-        .topbar-right a:hover { color: white; }
-
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-
-        h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: #0f3460; margin-bottom: 25px; }
-
-        .card { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 35px; }
-
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group.full { grid-column: 1 / -1; }
-        label { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #666; }
-        select, input[type="date"] {
-            padding: 12px 16px;
-            border: 1.5px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        select:focus, input:focus { border-color: #0f3460; }
-
-        .btn { padding: 12px 22px; background: linear-gradient(135deg, #0f3460 0%, #16213e 100%); color: white; border: none; border-radius: 999px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; box-shadow: 0 10px 20px rgba(15, 52, 96, 0.15); }
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 14px 24px rgba(15, 52, 96, 0.2); }
-        .btn-secondary { background: #f4f6fb; color: #0f3460; box-shadow: inset 0 0 0 1px rgba(15, 52, 96, 0.08); }
-        .btn-secondary:hover { background: #e9edf7; }
-
-        .alert { padding: 14px 18px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; }
-        .alert-success { background: #e6f7e7; color: #0b4d1d; border: 1px solid #b7deb1; }
-        .alert-error { background: #fdf0f1; color: #7a1220; border: 1px solid #f4c2c6; }
-
-        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 20px; }
-        th { background: #0f3460; color: white; padding: 12px 15px; text-align: left; font-weight: 500; letter-spacing: 0.5px; }
-        td { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; }
-        tr:hover td { background: #f9f9f9; }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-        .badge-en_attente { background: #fff3cd; color: #856404; }
-        .badge-confirmee { background: #d1e7dd; color: #0a3622; }
-        .badge-annulee { background: #f8d7da; color: #842029; }
-        .badge-terminee { background: #e2e3e5; color: #383d41; }
-
-        .car-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
-            background: white;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-        .car-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-        }
-        .car-image {
-            width: 100%;
-            height: 180px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            border-radius: 8px;
-        }
-        .car-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .car-info h4 {
-            margin: 0 0 8px 0;
-            color: #0f3460;
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .car-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .car-type {
-            background: #0f3460;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .car-specs {
-            font-size: 12px;
-            color: #666;
-        }
-        .car-price {
-            font-weight: 600;
-            color: #0f3460;
-            font-size: 16px;
-        }
-        .cars-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 0;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 800px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .modal-header {
-            padding: 20px 30px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .modal-header h3 {
-            margin: 0;
-            color: #0f3460;
-        }
-        .close {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover {
-            color: #0f3460;
-        }
-        .modal-body {
-            padding: 30px;
-        }
-
-        /* Calendar styles */
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-top: 20px;
-        }
-        .calendar-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        .calendar-day, .calendar-date {
-            padding: 10px;
-            text-align: center;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .calendar-day {
-            font-weight: 600;
-            color: #0f3460;
-            background: #f5f5f5;
-        }
-        .calendar-date {
-            cursor: pointer;
-            border: 1px solid #e0e0e0;
-            transition: background-color 0.2s;
-        }
-        .calendar-date:hover {
-            background-color: #f0f8ff;
-        }
-        .calendar-date.available {
-            background-color: #e6f7e7;
-            color: #0b4d1d;
-        }
-        .calendar-date.unavailable {
-            background-color: #fdf0f1;
-            color: #7a1220;
-            cursor: not-allowed;
-        }
-        .calendar-date.booked {
-            position: relative;
-        }
-        .calendar-date.booked::after {
-            content: "●";
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            color: #d32f2f;
-            font-size: 8px;
-        }
-        .calendar-date.selected {
-            background-color: #0f3460;
-            color: white;
-        }
-        .calendar-date.today {
-            border: 2px solid #0f3460;
-        }
-
-        @media (max-width: 600px) {
-            .cars-grid { grid-template-columns: 1fr; }
-            .modal-content { margin: 10% auto; width: 95%; }
-        }
-
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-    </style>
+    <?php include __DIR__ . '/../partials/seabel_fonts_link.php'; ?>
+    <?php include __DIR__ . '/../partials/seabel_theme_styles.php'; ?>
+    <?php include __DIR__ . '/../partials/seabel_rent_calendar_styles.php'; ?>
 </head>
-<body>
-    <div class="topbar">
-        <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="Seabel">
+<body class="layout-seabel-client layout-seabel-client-wide">
+    <header class="topbar">
+        <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="Seabel Hotels">
         <div class="topbar-right">
             <span>Bonjour, <?= htmlspecialchars((string) ($_SESSION['prenom'] ?? 'Client')) ?></span>
-            <a href="<?= htmlspecialchars(app_url('reservation')) ?>">Reservations</a>
-            <a href="<?= htmlspecialchars(app_url('logout')) ?>">Deconnexion</a>
+            <a href="<?= htmlspecialchars(app_url('reservation')) ?>">Réservations</a>
+            <a href="<?= htmlspecialchars(app_url('logout')) ?>">Déconnexion</a>
         </div>
-    </div>
+    </header>
 
     <div class="container">
-        <h2>Location de Voiture</h2>
+        <h2>Location de voiture</h2>
 
-        <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars($success) ?></div><?php endif; ?>
-        <?php if (!empty($error)): ?><div class="alert alert-error"><?= htmlspecialchars($error) ?></div><?php endif; ?>
+        <?php if (!empty($success)): ?><div class="alert alert-success"><?= htmlspecialchars((string) $success) ?></div><?php endif; ?>
+        <?php if (!empty($error)): ?><div class="alert alert-error"><?= htmlspecialchars((string) $error) ?></div><?php endif; ?>
 
         <div class="card">
-            <h3 style="margin-bottom: 20px; color: #0f3460;">Choisissez votre voiture</h3>
-            <div class="cars-grid">
+            <h3 style="margin-bottom: 8px; color: #0f3460;">Choisissez votre voiture</h3>
+            <p class="hint">Cliquez sur une voiture pour voir les disponibilités et réserver vos dates.</p>
+            <?php if (empty($available_cars)): ?>
+                <div class="empty-state">Aucune voiture disponible pour le moment. Merci de réessayer plus tard.</div>
+            <?php else: ?>
+            <div class="cars-grid" id="cars-rent-grid" style="margin-top: 24px;">
                 <?php foreach ($available_cars as $car): ?>
-                <div class="car-card" onclick="selectCar(<?= (int) $car['id'] ?>, '<?= htmlspecialchars(addslashes($car['marque'] . ' ' . $car['modele'])) ?>')">
-                    <?php if (!empty($car['image'])): ?>
+                <?php
+                    $carLabel = $car['marque'] . ' ' . $car['modele'];
+                    $rentCarImg = car_image_src($car['image'] ?? null);
+                ?>
+                <button type="button"
+                    class="car-card"
+                    data-car-id="<?= (int) $car['id'] ?>"
+                    data-car-label="<?= htmlspecialchars($carLabel, ENT_QUOTES, 'UTF-8') ?>"
+                    data-daily-price="<?= htmlspecialchars((string) (float) $car['prix_par_jour'], ENT_QUOTES, 'UTF-8') ?>"
+                >
+                    <?php if ($rentCarImg !== null): ?>
                         <div class="car-image">
-                            <img src="<?= htmlspecialchars('../../uploads/cars/' . $car['image']) ?>" alt="<?= htmlspecialchars($car['marque']) ?> <?= htmlspecialchars($car['modele']) ?>">
+                            <img src="<?= htmlspecialchars($rentCarImg) ?>" alt="<?= htmlspecialchars($carLabel) ?>">
                         </div>
+                    <?php else: ?>
+                        <div class="car-image">Pas d’image</div>
                     <?php endif; ?>
-                    <div class="car-info">
-                        <h4 class="car-title"><?= htmlspecialchars($car['marque']) ?> <?= htmlspecialchars($car['modele']) ?></h4>
-                        <div class="car-details">
-                            <span class="car-type"><?= htmlspecialchars(ucfirst($car['type'])) ?></span>
-                            <span class="car-specs"><?= (int) $car['portes'] ?> portes • <?= htmlspecialchars(ucfirst($car['carburant'])) ?></span>
-                        </div>
-                        <div class="car-price">
-                            <?= number_format((float) $car['prix_par_jour'], 2) ?> € / jour
+                    <div class="car-card-inner">
+                        <div class="car-info">
+                            <h4 class="car-title"><?= htmlspecialchars((string) $car['marque']) ?> <?= htmlspecialchars((string) $car['modele']) ?></h4>
+                            <div class="car-details">
+                                <span class="car-type"><?= htmlspecialchars(ucfirst((string) $car['type'])) ?></span>
+                                <span class="car-specs"><?= (int) $car['portes'] ?> portes • <?= htmlspecialchars(ucfirst((string) $car['carburant'])) ?></span>
+                            </div>
+                            <div class="car-price"><?= number_format((float) $car['prix_par_jour'], 2, ',', ' ') ?> € / jour</div>
+                            <div class="car-cta">Voir le calendrier →</div>
                         </div>
                     </div>
-                </div>
+                </button>
                 <?php endforeach; ?>
             </div>
-        </div>
-
-        <div id="calendar-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 id="modal-title">Calendrier de disponibilité</h3>
-                    <span class="close" onclick="closeModal()">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div id="calendar-container">
-                    </div>
-                    <form id="rental-form" method="POST" action="<?= htmlspecialchars(app_url('cars/rent/create')) ?>" style="display: none;">
-                        <input type="hidden" name="car_id" id="selected-car-id">
-                        <div class="form-grid" style="margin-top: 20px;">
-                            <div class="form-group">
-                                <label>Date de début *</label>
-                                <input type="date" name="date_debut" id="date-debut" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Date de fin *</label>
-                                <input type="date" name="date_fin" id="date-fin" required>
-                            </div>
-                        </div>
-                        <div style="margin-top: 20px;">
-                            <button type="submit" class="btn">Confirmer la location</button>
-                            <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <?php if (!empty($user_rentals)): ?>
         <div class="card">
-            <h3 style="margin-bottom: 20px; color: #0f3460;">Mes locations de voitures</h3>
+            <h3 style="margin-bottom: 20px; color: #0f3460;">Mes locations</h3>
+            <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
@@ -318,222 +85,488 @@
                         <th>Période</th>
                         <th>Prix total</th>
                         <th>Statut</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($user_rentals as $rental): ?>
+                    <?php
+                        $st = (string) $rental['statut'];
+                        $can_cancel = $st === 'en_attente'
+                            || ($st === 'confirmee' && strtotime((string) $rental['date_debut']) > strtotime('today'));
+                    ?>
                     <tr>
                         <td>
-                            <?= htmlspecialchars($rental['marque']) ?> <?= htmlspecialchars($rental['modele']) ?><br>
-                            <small style="color: #666;"><?= htmlspecialchars(ucfirst($rental['type'])) ?> • <?= htmlspecialchars(ucfirst($rental['carburant'])) ?></small>
+                            <?= htmlspecialchars((string) $rental['marque']) ?> <?= htmlspecialchars((string) $rental['modele']) ?><br>
+                            <small style="color: #666;"><?= htmlspecialchars(ucfirst((string) $rental['type'])) ?> • <?= htmlspecialchars(ucfirst((string) $rental['carburant'])) ?></small>
                         </td>
                         <td>
-                            Du <?= date('d/m/Y', strtotime($rental['date_debut'])) ?><br>
-                            Au <?= date('d/m/Y', strtotime($rental['date_fin'])) ?>
+                            Du <?= date('d/m/Y', strtotime((string) $rental['date_debut'])) ?><br>
+                            au <?= date('d/m/Y', strtotime((string) $rental['date_fin'])) ?>
                         </td>
-                        <td><?= number_format((float) $rental['prix_total'], 2) ?> €</td>
+                        <td><?= number_format((float) $rental['prix_total'], 2, ',', ' ') ?> €</td>
                         <td>
-                            <span class="badge badge-<?= htmlspecialchars($rental['statut']) ?>">
-                                <?= htmlspecialchars(str_replace('_', ' ', $rental['statut'])) ?>
+                            <span class="badge badge-<?= htmlspecialchars($st) ?>">
+                                <?= htmlspecialchars($statut_labels[$st] ?? str_replace('_', ' ', $st)) ?>
                             </span>
+                        </td>
+                        <td>
+                            <?php if ($can_cancel): ?>
+                            <form method="POST" action="<?= htmlspecialchars(app_url('cars/rent/cancel')) ?>" style="display:inline;" onsubmit="return confirm('Annuler cette location ?');">
+                                <input type="hidden" name="rental_id" value="<?= (int) $rental['id'] ?>">
+                                <button type="submit" class="btn btn-danger btn-small">Annuler</button>
+                            </form>
+                            <?php else: ?>
+                            <span style="color:#999; font-size:12px;">—</span>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
         </div>
         <?php endif; ?>
     </div>
 
+    <div id="calendar-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Calendrier de disponibilité</h3>
+                <button type="button" class="close" onclick="closeModal()" aria-label="Fermer">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="calendar-container"></div>
+                <form id="rental-form" method="POST" action="<?= htmlspecialchars(app_url('cars/rent/create')) ?>" style="display: none;">
+                    <input type="hidden" name="car_id" id="selected-car-id">
+                    <div class="form-grid" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="date-debut">Date de début *</label>
+                            <input type="date" name="date_debut" id="date-debut" required readonly aria-readonly="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="date-fin">Date de fin *</label>
+                            <input type="date" name="date_fin" id="date-fin" required readonly aria-readonly="true">
+                        </div>
+                    </div>
+                    <div id="rental-summary" class="rental-summary" style="display: none;"></div>
+                    <div class="btn-wrap">
+                        <button type="submit" class="btn" id="btn-confirm-rental">Confirmer la location</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                    </div>
+                </form>
+                <p id="calendar-hint" class="hint" style="margin-top: 16px;">chargement…</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let selectedCarId = null;
-        let selectedDates = [];
-        let bookedDates = [];
+(function () {
+    const API_BOOKED_RAW = <?= json_encode(app_url('cars/rent/api/booked-dates'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?>;
 
-        function selectCar(carId, carName) {
-            selectedCarId = carId;
-            document.getElementById('modal-title').textContent = `Calendrier de disponibilité - ${carName}`;
-            document.getElementById('selected-car-id').value = carId;
-
-            // Charger les dates réservées pour cette voiture
-            loadBookedDates(carId);
-
-            // Afficher le modal
-            document.getElementById('calendar-modal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('calendar-modal').style.display = 'none';
-            selectedDates = [];
-            document.getElementById('rental-form').style.display = 'none';
-            document.getElementById('calendar-container').innerHTML = '<div style="text-align: center; padding: 40px;">Chargement du calendrier...</div>';
-        }
-
-        function loadBookedDates(carId) {
-            // Faire une requête AJAX pour récupérer les dates réservées
-            fetch(`<?= htmlspecialchars(app_url('cars/rent/api/booked-dates')) ?>?car_id=${carId}`)
-                .then(response => response.json())
-                .then(data => {
-                    bookedDates = data.booked_dates || [];
-                    generateCalendar();
-                })
-                .catch(error => {
-                    console.error('Erreur lors du chargement des dates:', error);
-                    generateCalendar();
-                });
-        }
-
-        function generateCalendar() {
-            const now = new Date();
-            const currentMonth = now.getMonth();
-            const currentYear = now.getFullYear();
-
-            let calendarHTML = '<div style="text-align: center; margin-bottom: 20px;">';
-            calendarHTML += '<button onclick="changeMonth(-1)" class="btn btn-secondary" style="margin-right: 10px;">&larr; Précédent</button>';
-            calendarHTML += '<span id="current-month-year" style="font-weight: 600; margin: 0 20px;">' + getMonthName(currentMonth) + ' ' + currentYear + '</span>';
-            calendarHTML += '<button onclick="changeMonth(1)" class="btn btn-secondary">&rarr; Suivant</button>';
-            calendarHTML += '</div>';
-
-            calendarHTML += '<div class="calendar-header">';
-            ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].forEach(day => {
-                calendarHTML += `<div class="calendar-day">${day}</div>`;
-            });
-            calendarHTML += '</div>';
-
-            calendarHTML += '<div class="calendar" id="calendar-grid">';
-            calendarHTML += generateMonthCalendar(currentMonth, currentYear);
-            calendarHTML += '</div>';
-
-            document.getElementById('calendar-container').innerHTML = calendarHTML;
-        }
-
-        function generateMonthCalendar(month, year) {
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const startDate = new Date(firstDay);
-            startDate.setDate(startDate.getDate() - firstDay.getDay());
-
-            let html = '';
-            let currentDate = new Date(startDate);
-
-            for (let week = 0; week < 6; week++) {
-                for (let day = 0; day < 7; day++) {
-                    const dateStr = currentDate.toISOString().split('T')[0];
-                    const isCurrentMonth = currentDate.getMonth() === month;
-                    const isPast = currentDate < new Date() && !isSameDay(currentDate, new Date());
-                    const isBooked = bookedDates.includes(dateStr);
-                    const isToday = isSameDay(currentDate, new Date());
-
-                    let classes = 'calendar-date';
-                    if (!isCurrentMonth) classes += ' unavailable';
-                    else if (isPast) classes += ' unavailable';
-                    else if (isBooked) classes += ' unavailable booked';
-                    else classes += ' available';
-                    if (isToday) classes += ' today';
-
-                    html += `<div class="${classes}" data-date="${dateStr}" onclick="selectDate('${dateStr}')" title="${isBooked ? 'Réservation confirmée' : isPast ? 'Date passée' : 'Disponible'}">${currentDate.getDate()}</div>`;
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-                if (currentDate > lastDay && currentDate.getDay() === 0) break;
-            }
-
-            return html;
-        }
-
-        function selectDate(dateStr) {
-            const dateElement = document.querySelector(`[data-date="${dateStr}"]`);
-            if (!dateElement || dateElement.classList.contains('unavailable')) return;
-
-            if (selectedDates.length === 0) {
-                // Première sélection
-                selectedDates = [dateStr];
-                dateElement.classList.add('selected');
-            } else if (selectedDates.length === 1) {
-                // Deuxième sélection
-                const firstDate = new Date(selectedDates[0]);
-                const secondDate = new Date(dateStr);
-
-                if (secondDate < firstDate) {
-                    // Si la deuxième date est avant la première, inverser
-                    selectedDates = [dateStr, selectedDates[0]];
-                } else {
-                    selectedDates = [selectedDates[0], dateStr];
-                }
-
-                // Marquer toutes les dates entre les deux comme sélectionnées
-                updateSelectedRange();
-
-                // Afficher le formulaire
-                showRentalForm();
+    function bookingApiUrl(carId) {
+        var base = String(API_BOOKED_RAW || '');
+        try {
+            if (/^https?:\/\//i.test(base)) {
+                base = String(new URL(base).href);
+            } else if (base.charAt(0) === '/') {
+                base = window.location.origin + base;
             } else {
-                // Réinitialiser et sélectionner une nouvelle date
-                clearSelection();
-                selectedDates = [dateStr];
-                dateElement.classList.add('selected');
+                base = new URL(base, window.location.href).href;
             }
+        } catch (e) {
+            base = String(API_BOOKED_RAW || '');
         }
+        return base + (base.indexOf('?') === -1 ? '?' : '&') + 'car_id=' + encodeURIComponent(String(carId));
+    }
 
-        function updateSelectedRange() {
-            // Effacer toutes les sélections
-            document.querySelectorAll('.calendar-date.selected').forEach(el => {
-                el.classList.remove('selected');
-            });
+    let selectedCarId = null;
+    let selectedDates = [];
+    let bookedDates = [];
+    let bookedSet = new Set();
+    let calendarView = { month: new Date().getMonth(), year: new Date().getFullYear() };
+    let dailyPrice = 0;
 
-            if (selectedDates.length === 2) {
-                const startDate = new Date(selectedDates[0]);
-                const endDate = new Date(selectedDates[1]);
+    function normalizeBookedList(raw) {
+        if (!Array.isArray(raw)) return [];
+        return raw.map(function (d) {
+            if (typeof d !== 'string') return '';
+            var m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
+            return m ? m[1] + '-' + m[2] + '-' + m[3] : '';
+        }).filter(Boolean);
+    }
 
-                let currentDate = new Date(startDate);
-                while (currentDate <= endDate) {
-                    const dateStr = currentDate.toISOString().split('T')[0];
-                    const dateElement = document.querySelector(`[data-date="${dateStr}"]`);
-                    if (dateElement && !dateElement.classList.contains('unavailable')) {
-                        dateElement.classList.add('selected');
-                    }
-                    currentDate.setDate(currentDate.getDate() + 1);
+    function syncBookedSet() {
+        bookedSet = new Set(bookedDates);
+    }
+
+    function countFreeDaysInMonth(month, year) {
+        var n = 0;
+        var d = new Date(year, month, 1);
+        var last = new Date(year, month + 1, 0);
+        while (d <= last) {
+            var ds = formatLocalYMD(d);
+            if (!isPastDate(d) && !bookedSet.has(ds)) n++;
+            d.setDate(d.getDate() + 1);
+        }
+        return n;
+    }
+
+    function formatLocalYMD(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+    }
+
+    function parseYMD(s) {
+        const p = s.split('-').map(Number);
+        return new Date(p[0], p[1] - 1, p[2]);
+    }
+
+    function startOfDay(d) {
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    function isPastDate(d) {
+        const today = startOfDay(new Date());
+        return startOfDay(d) < today;
+    }
+
+    function isSameDay(a, b) {
+        return a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate();
+    }
+
+    function monthName(m) {
+        return ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][m];
+    }
+
+    function setHint(text) {
+        const el = document.getElementById('calendar-hint');
+        if (el) el.textContent = text;
+    }
+
+    function daysBetweenInclusive(startStr, endStr) {
+        const a = parseYMD(startStr).getTime();
+        const b = parseYMD(endStr).getTime();
+        return Math.max(1, Math.round((b - a) / 86400000));
+    }
+
+    function rangeConflicts(startStr, endStr) {
+        let d = parseYMD(startStr);
+        const end = parseYMD(endStr);
+        while (d <= end) {
+            const ds = formatLocalYMD(d);
+            if (bookedSet.has(ds)) return true;
+            if (isPastDate(d)) return true;
+            d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+        }
+        return false;
+    }
+
+    window.selectCar = function (carId, carName, pricePerDay) {
+        selectedCarId = carId;
+        selectedDates = [];
+        dailyPrice = typeof pricePerDay === 'number' && !isNaN(pricePerDay) ? pricePerDay : 0;
+
+        const now = new Date();
+        calendarView.month = now.getMonth();
+        calendarView.year = now.getFullYear();
+
+        document.getElementById('modal-title').textContent = 'Disponibilités — ' + carName;
+        document.getElementById('selected-car-id').value = String(carId);
+        document.getElementById('rental-form').style.display = 'none';
+        document.getElementById('rental-summary').style.display = 'none';
+        const hint = document.getElementById('calendar-hint');
+        if (hint) hint.style.display = 'block';
+
+        const modal = document.getElementById('calendar-modal');
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+
+        document.getElementById('calendar-container').innerHTML = '<div class="calendar-loading">Chargement des disponibilités…</div>';
+        setHint('Choisissez une première date, puis une seconde pour définir la période.');
+
+        loadBookedDates(carId);
+    };
+
+    window.closeModal = function () {
+        const modal = document.getElementById('calendar-modal');
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        selectedDates = [];
+        document.getElementById('rental-form').style.display = 'none';
+        document.getElementById('rental-summary').style.display = 'none';
+        document.getElementById('calendar-container').innerHTML = '';
+        setHint('');
+    };
+
+    function loadBookedDates(carId) {
+        const url = bookingApiUrl(carId);
+        fetch(url, { credentials: 'same-origin', headers: { Accept: 'application/json' } })
+            .then(function (r) {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            })
+            .then(function (data) {
+                if (data.error) {
+                    bookedDates = [];
+                    syncBookedSet();
+                    generateCalendar();
+                    setHint(String(data.error));
+                    return;
                 }
-            }
-        }
-
-        function clearSelection() {
-            selectedDates = [];
-            document.querySelectorAll('.calendar-date.selected').forEach(el => {
-                el.classList.remove('selected');
+                bookedDates = normalizeBookedList(data.booked_dates);
+                syncBookedSet();
+                generateCalendar();
+                setHint('Première étape : cliquez sur une date verte (libre). Deuxième clic : date de fin — la période inclut ces deux jours.');
+            })
+            .catch(function () {
+                bookedDates = [];
+                syncBookedSet();
+                generateCalendar();
+                setHint('Impossible de charger les réservations. Rechargez la page ou réessayez plus tard.');
             });
-        }
+    }
 
-        function showRentalForm() {
-            if (selectedDates.length === 2) {
-                document.getElementById('date-debut').value = selectedDates[0];
-                document.getElementById('date-fin').value = selectedDates[1];
-                document.getElementById('rental-form').style.display = 'block';
+    window.changeMonth = function (delta) {
+        calendarView.month += delta;
+        if (calendarView.month > 11) {
+            calendarView.month = 0;
+            calendarView.year++;
+        } else if (calendarView.month < 0) {
+            calendarView.month = 11;
+            calendarView.year--;
+        }
+        selectedDates = [];
+        document.getElementById('rental-form').style.display = 'none';
+        document.getElementById('rental-summary').style.display = 'none';
+        generateCalendar();
+        setHint('Première étape : cliquez sur le jour de départ. Deuxième clic : jour de retour.');
+    };
+
+    function generateCalendar() {
+        const m = calendarView.month;
+        const y = calendarView.year;
+        var container = document.getElementById('calendar-container');
+        if (!container) return;
+
+        let html = '<div class="calendar-nav">';
+        html += '<button type="button" class="btn btn-secondary" onclick="changeMonth(-1)">← Mois précédent</button>';
+        html += '<span id="current-month-year">' + monthName(m) + ' ' + y + '</span>';
+        html += '<button type="button" class="btn btn-secondary" onclick="changeMonth(1)">Mois suivant →</button>';
+        html += '</div>';
+
+        html += '<div class="calendar-header">';
+        ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].forEach(function (day) {
+            html += '<div class="calendar-day">' + day + '</div>';
+        });
+        html += '</div>';
+
+        var libres = countFreeDaysInMonth(m, y);
+        html += '<div class="calendar-legend" role="group" aria-label="Légende du calendrier">';
+        html += '<span class="calendar-legend-item"><span class="calendar-legend-swatch valid" aria-hidden="true"></span> Date libre (réservable)</span>';
+        html += '<span class="calendar-legend-item"><span class="calendar-legend-swatch booked" aria-hidden="true"></span> Déjà réservé</span>';
+        html += '<span class="calendar-legend-item"><span class="calendar-legend-swatch past" aria-hidden="true"></span> Passée / indisponible</span>';
+        html += '<span class="calendar-legend-item"><span class="calendar-legend-swatch other" aria-hidden="true"></span> Autre mois</span>';
+        html += '<div class="calendar-legend-count">' + libres + ' jour' + (libres > 1 ? 's' : '') + ' libre' + (libres > 1 ? 's' : '') + ' ce mois-ci</div>';
+        html += '</div>';
+
+        html += '<div class="calendar" id="calendar-grid">';
+        html += generateMonthCells(m, y);
+        html += '</div>';
+
+        try {
+            container.innerHTML = html;
+        } catch (e) {
+            container.innerHTML = '<p class="calendar-loading">Erreur d’affichage du calendrier. Rechargez la page.</p>';
+        }
+    }
+
+    function generateMonthCells(month, year) {
+        const first = new Date(year, month, 1);
+        const last = new Date(year, month + 1, 0);
+        let cur = new Date(first);
+        cur.setDate(cur.getDate() - first.getDay());
+
+        let html = '';
+        const today = startOfDay(new Date());
+
+        for (let week = 0; week < 6; week++) {
+            for (let d = 0; d < 7; d++) {
+                const dateStr = formatLocalYMD(cur);
+                const inMonth = cur.getMonth() === month;
+                const past = isPastDate(cur);
+                const booked = bookedSet.has(dateStr);
+                const isToday = isSameDay(cur, today);
+
+                let cls = 'calendar-date';
+                let aria = '';
+                if (!inMonth) {
+                    cls += ' muted';
+                    aria = 'Hors mois affiché';
+                } else if (past) {
+                    cls += ' unavailable past-date';
+                    aria = 'Date passée, non sélectionnable';
+                } else if (booked) {
+                    cls += ' unavailable booked-date';
+                    aria = 'Déjà réservé, non disponible';
+                } else {
+                    cls += ' available';
+                    aria = 'Date libre, cliquable pour réserver';
+                }
+                if (isToday && inMonth) cls += ' today';
+
+                const canClick = inMonth && !past && !booked;
+                const title = aria;
+
+                html += '<div class="' + cls + '" data-date="' + dateStr + '"';
+                if (title) html += ' title="' + title.replace(/"/g, '&quot;') + '"';
+                if (canClick) html += ' aria-label="' + title.replace(/"/g, '&quot;') + ' — ' + dateStr + '"';
+                if (canClick) {
+                    html += ' onclick="selectDate(\'' + dateStr + '\')" role="button" tabindex="0"';
+                    html += ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();selectDate(\'' + dateStr + '\');}"';
+                }
+                html += '>';
+                html += '<span class="cell-num">' + cur.getDate() + '</span>';
+                if (booked && inMonth && !past) {
+                    html += '<span class="cell-label">Rés.</span>';
+                }
+                html += '</div>';
+
+                cur.setDate(cur.getDate() + 1);
             }
+            if (cur > last && cur.getDay() === 0) break;
+        }
+        return html;
+    }
+
+    window.selectDate = function (dateStr) {
+        const cell = document.querySelector('.calendar-date[data-date="' + dateStr + '"]');
+        if (!cell || cell.classList.contains('unavailable') || cell.classList.contains('muted')) return;
+
+        if (selectedDates.length === 0) {
+            selectedDates = [dateStr];
+            cell.classList.add('selected');
+            setHint('Deuxième clic : date de fin (incluse).');
+            return;
         }
 
-        function changeMonth(direction) {
-            // Cette fonction pourrait être étendue pour changer de mois
-            // Pour l'instant, on régénère juste le calendrier actuel
-            generateCalendar();
-        }
-
-        function getMonthName(month) {
-            const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-            return months[month];
-        }
-
-        function isSameDay(date1, date2) {
-            return date1.getFullYear() === date2.getFullYear() &&
-                   date1.getMonth() === date2.getMonth() &&
-                   date1.getDate() === date2.getDate();
-        }
-
-        // Fermer le modal si on clique en dehors
-        window.onclick = function(event) {
-            const modal = document.getElementById('calendar-modal');
-            if (event.target === modal) {
-                closeModal();
+        if (selectedDates.length === 1) {
+            let a = selectedDates[0];
+            let b = dateStr;
+            if (parseYMD(b) < parseYMD(a)) {
+                var t = a; a = b; b = t;
             }
+
+            if (rangeConflicts(a, b)) {
+                setHint('La période choisie chevauche une date déjà réservée ou invalide. Choisissez d’autres dates.');
+                clearSelectionDom();
+                selectedDates = [];
+                return;
+            }
+
+            selectedDates = [a, b];
+            paintRange(a, b);
+            showRentalForm();
+            setHint('Vérifiez le récapitulatif puis confirmez.');
+            return;
         }
+
+        clearSelectionDom();
+        selectedDates = [dateStr];
+        cell.classList.add('selected');
+        setHint('Deuxième clic : date de fin (incluse).');
+    };
+
+    function clearSelectionDom() {
+        document.querySelectorAll('.calendar-date.selected').forEach(function (el) {
+            el.classList.remove('selected');
+        });
+    }
+
+    function paintRange(startStr, endStr) {
+        clearSelectionDom();
+        let d = parseYMD(startStr);
+        const end = parseYMD(endStr);
+        while (d <= end) {
+            const ds = formatLocalYMD(d);
+            const el = document.querySelector('.calendar-date[data-date="' + ds + '"]');
+            if (el && !el.classList.contains('unavailable') && !el.classList.contains('muted')) {
+                el.classList.add('selected');
+            }
+            d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+        }
+    }
+
+    function formatMoney(n) {
+        return n.toFixed(2).replace('.', ',') + ' €';
+    }
+
+    function showRentalForm() {
+        if (selectedDates.length !== 2) return;
+        var start = selectedDates[0];
+        var end = selectedDates[1];
+        document.getElementById('date-debut').value = start;
+        document.getElementById('date-fin').value = end;
+
+        var billableDays = daysBetweenInclusive(start, end);
+        var total = billableDays * dailyPrice;
+
+        var sum = document.getElementById('rental-summary');
+        sum.style.display = 'block';
+        sum.innerHTML =
+            '<strong>Récapitulatif</strong><br>' +
+            'Période : du <strong>' + start + '</strong> au <strong>' + end + '</strong><br>' +
+            'Durée facturée : <strong>' + billableDays + '</strong> jour' + (billableDays > 1 ? 's' : '') +
+            ' × ' + formatMoney(dailyPrice) + ' / jour<br>' +
+            'Total estimé : <strong>' + formatMoney(total) + '</strong>';
+
+        document.getElementById('rental-form').style.display = 'block';
+    }
+
+    document.addEventListener('click', function (event) {
+        var modal = document.getElementById('calendar-modal');
+        if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            var modal = document.getElementById('calendar-modal');
+            if (modal && modal.classList.contains('is-open')) closeModal();
+        }
+    });
+
+    function openCalendarFromCard(btn) {
+        if (!btn || !btn.dataset || !btn.dataset.carId) return;
+        var id = parseInt(btn.dataset.carId, 10);
+        if (!id) return;
+        var name = btn.dataset.carLabel || '';
+        var raw = String(btn.dataset.dailyPrice || '0').replace(',', '.');
+        var price = parseFloat(raw, 10);
+        if (isNaN(price)) price = 0;
+        window.selectCar(id, name, price);
+    }
+
+    var rentGrid = document.getElementById('cars-rent-grid');
+    if (rentGrid) {
+        rentGrid.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest ? e.target.closest('.car-card') : null;
+            if (!btn || !rentGrid.contains(btn)) return;
+            e.preventDefault();
+            openCalendarFromCard(btn);
+        });
+        rentGrid.addEventListener('keydown', function (e) {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            var btn = e.target && e.target.closest ? e.target.closest('.car-card') : null;
+            if (!btn || !rentGrid.contains(btn)) return;
+            e.preventDefault();
+            openCalendarFromCard(btn);
+        });
+    }
+})();
     </script>
 </body>
 </html>
