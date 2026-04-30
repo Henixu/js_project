@@ -57,29 +57,34 @@ final class CarRentalController extends Controller
             $dateDebut = trim((string) ($_POST['date_debut'] ?? ''));
             $dateFin = trim((string) ($_POST['date_fin'] ?? ''));
 
-            // Validation
             if ($carId === 0 || $dateDebut === '' || $dateFin === '') {
                 $error = 'Veuillez remplir tous les champs.';
-            } elseif (strtotime($dateDebut) >= strtotime($dateFin)) {
-                $error = 'La date de fin doit être après la date de début.';
+            } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateDebut) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateFin)) {
+                $error = 'Format de date invalide.';
+            } elseif (strtotime($dateDebut) === false || strtotime($dateFin) === false) {
+                $error = 'Dates invalides.';
+            } elseif (strtotime($dateDebut) > strtotime($dateFin)) {
+                $error = 'La date de fin ne peut pas être avant la date de début.';
             } elseif (strtotime($dateDebut) < strtotime('today')) {
                 $error = 'La date de début ne peut pas être dans le passé.';
             } else {
-                // Vérifier que la voiture est disponible pour ces dates
-                if (!$this->cars->isAvailableForPeriod($carId, $dateDebut, $dateFin)) {
+                $car = $this->cars->findById($carId);
+                if ($car === null) {
+                    $error = 'Voiture introuvable.';
+                } elseif (($car['statut'] ?? '') !== 'disponible') {
+                    $error = 'Cette voiture n\'est plus disponible à la location.';
+                } elseif (!$this->cars->isAvailableForPeriod($carId, $dateDebut, $dateFin)) {
                     $error = 'Cette voiture n\'est pas disponible pour les dates sélectionnées.';
                 } else {
-                    // Calculer le prix total
-                    $car = $this->cars->findById($carId);
-                    if ($car === null) {
-                        $error = 'Voiture introuvable.';
-                    } else {
-                        $days = (strtotime($dateFin) - strtotime($dateDebut)) / (60 * 60 * 24);
-                        $prixTotal = $days * (float) $car['prix_par_jour'];
+                    // Nombre de jours facturés : même jour début/fin = 1 jour (aligné avec le calendrier)
+                    $days = max(1, (int) round((strtotime($dateFin) - strtotime($dateDebut)) / 86400));
+                    $prixTotal = round($days * (float) $car['prix_par_jour'], 2);
 
-                        // Créer la location
+                    try {
                         $this->rentals->create($userId, $carId, $dateDebut, $dateFin, $prixTotal);
                         $success = 'Votre demande de location a été enregistrée avec succès !';
+                    } catch (\Throwable) {
+                        $error = 'Impossible d\'enregistrer la location. Réessayez ou contactez l\'administrateur.';
                     }
                 }
             }
@@ -126,6 +131,37 @@ final class CarRentalController extends Controller
         }
 
         header('Content-Type: application/json');
-        echo json_encode(['booked_dates' => array_unique($bookedDates)]);
+        echo json_encode([
+            'booked_dates' => array_values(array_unique($bookedDates, SORT_STRING)),
+        ]);
+    }
+
+    public function cancel(): void
+    {
+        $this->requireLogin();
+
+        $userId = (int) ($_SESSION['user_id'] ?? 0);
+        $rentalId = (int) ($_POST['rental_id'] ?? 0);
+        $success = '';
+        $error = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $rentalId > 0) {
+            if ($this->rentals->cancelByUser($rentalId, $userId)) {
+                $success = 'La location a été annulée.';
+            } else {
+                $error = 'Annulation impossible (location introuvable, déjà terminée ou non annulable).';
+            }
+        } else {
+            $error = 'Requête invalide.';
+        }
+
+        $redirectUrl = app_url('cars/rent');
+        if ($success !== '') {
+            $redirectUrl .= '&success=' . urlencode($success);
+        } else {
+            $redirectUrl .= '&error=' . urlencode($error);
+        }
+        header('Location: ' . $redirectUrl);
+        exit;
     }
 }

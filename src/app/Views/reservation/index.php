@@ -5,85 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservation - Seabel Hotels</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background: #f5f5f5; color: #333; }
-
-        .topbar {
-            background: #0f3460;
-            color: white;
-            padding: 14px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .topbar img { height: 35px; filter: brightness(0) invert(1); }
-        .topbar-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
-        .topbar-right a { color: rgba(255,255,255,0.8); text-decoration: none; }
-        .topbar-right a:hover { color: white; }
-
-        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-
-        h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: #0f3460; margin-bottom: 25px; }
-
-        .card { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 35px; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group.full { grid-column: 1 / -1; }
-        label { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #666; }
-        select, input[type="date"], input[type="number"] {
-            padding: 12px 16px;
-            border: 1.5px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        select:focus, input:focus { border-color: #0f3460; }
-
-        .prix-preview {
-            background: #f0f4ff;
-            border: 1.5px solid #0f3460;
-            border-radius: 8px;
-            padding: 15px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #0f3460;
-            text-align: center;
-            display: none;
-        }
-
-        .btn { padding: 14px 30px; background: #0f3460; color: white; border: none; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background 0.3s; }
-        .btn:hover { background: #16213e; }
-        .btn-secondary { background: #6c757d; }
-        .btn-secondary:hover { background: #5a6268; }
-        .btn-small { padding: 6px 10px; font-size: 11px; border-radius: 6px; letter-spacing: 0.8px; text-transform: uppercase; display: inline-block; }
-        .table-action-cell { white-space: nowrap; }
-
-        .alert { padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
-        .alert-success { background: #efe; color: #060; border: 1px solid #9d9; }
-        .alert-error { background: #fee; color: #c00; border: 1px solid #fcc; }
-
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background: #0f3460; color: white; padding: 12px 15px; text-align: left; font-weight: 500; letter-spacing: 0.5px; }
-        td { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; }
-        tr:hover td { background: #f9f9f9; }
-
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-        .badge-attente { background: #fff3cd; color: #856404; }
-        .badge-confirmee { background: #d1e7dd; color: #0a3622; }
-        .badge-annulee { background: #f8d7da; color: #842029; }
-
-        @media (max-width: 600px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .form-group.full { grid-column: 1; }
-        }
-    </style>
+    <?php include __DIR__ . '/../partials/seabel_fonts_link.php'; ?>
+    <?php include __DIR__ . '/../partials/seabel_theme_styles.php'; ?>
 </head>
-<body>
+<body class="layout-seabel-client layout-seabel-reservation">
     <div class="topbar">
         <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="Seabel">
         <div class="topbar-right">

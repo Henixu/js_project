@@ -24,18 +24,15 @@ final class CarController extends Controller
 
         $file = $_FILES['image'];
 
-        // Vérifier les erreurs d'upload
         if ($file['error'] !== UPLOAD_ERR_OK) {
             return null;
         }
 
-        // Vérifier le type de fichier
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!in_array($file['type'], $allowedTypes)) {
             return null;
         }
 
-        // Vérifier la taille (max 5MB)
         if ($file['size'] > 5 * 1024 * 1024) {
             return null;
         }

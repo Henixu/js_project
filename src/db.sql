@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS car_rentals (
     statut ENUM('en_attente', 'confirmee', 'annulee', 'terminee') DEFAULT 'en_attente',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE RESTRICT
+    FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE CASCADE
 );
 
 INSERT IGNORE INTO cars (marque, modele, type, portes, carburant, prix_par_jour, statut)
