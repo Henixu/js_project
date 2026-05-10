@@ -57,13 +57,13 @@ final class DashboardController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string) ($_POST['event_action'] ?? '') === 'create') {
             $eventOld = [
-                'titre' => trim((string) ($_POST['titre'] ?? '')),
-                'hotel' => trim((string) ($_POST['hotel'] ?? '')),
-                'chanteur' => trim((string) ($_POST['chanteur'] ?? '')),
+                'titre' => trim(strip_tags((string) ($_POST['titre'] ?? ''))),
+                'hotel' => trim(strip_tags((string) ($_POST['hotel'] ?? ''))),
+                'chanteur' => trim(strip_tags((string) ($_POST['chanteur'] ?? ''))),
                 'date_debut' => (string) ($_POST['date_debut'] ?? ''),
                 'date_fin' => (string) ($_POST['date_fin'] ?? ''),
-                'description' => trim((string) ($_POST['description'] ?? '')),
-                'image_url' => trim((string) ($_POST['image_url'] ?? '')),
+                'description' => trim(strip_tags((string) ($_POST['description'] ?? ''))),
+                'image_url' => trim(strip_tags((string) ($_POST['image_url'] ?? ''))),
             ];
 
             if (
@@ -80,9 +80,13 @@ final class DashboardController extends Controller
             } elseif ($eventOld['image_url'] !== '' && filter_var($eventOld['image_url'], FILTER_VALIDATE_URL) === false) {
                 $eventError = 'L\'URL de l\'image est invalide.';
             } else {
+                $hotelId = $this->reservations->getHotelIdByName($eventOld['hotel']);
+                if ($hotelId === null) {
+                    $eventError = 'Veuillez choisir un hotel valide dans la liste.';
+                } else {
                 $this->events->create(
                     $eventOld['titre'],
-                    $eventOld['hotel'],
+                    $hotelId,
                     $eventOld['chanteur'],
                     $eventOld['date_debut'],
                     $eventOld['date_fin'],
@@ -92,6 +96,7 @@ final class DashboardController extends Controller
 
                 $_SESSION['flash_event_success'] = 'Evenement ajoute avec succes.';
                 $this->redirect('dashboard');
+                }
             }
         }
 

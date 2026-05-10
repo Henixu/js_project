@@ -53,6 +53,28 @@ if (!function_exists('asset_url')) {
     }
 }
 
+if (!function_exists('slugify')) {
+    function slugify(string $value): string
+    {
+        $value = trim(strtolower($value));
+        $value = preg_replace('/[^a-z0-9]+/', '-', $value) ?? '';
+        $value = trim($value, '-');
+
+        return $value !== '' ? $value : 'hotel';
+    }
+}
+
+if (!function_exists('stars_image_url')) {
+    function stars_image_url(int $stars): string
+    {
+        if ($stars >= 4) {
+            return 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/4_Stars-7.png';
+        }
+
+        return 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/3_Stars-8.png';
+    }
+}
+
 if (!function_exists('car_image_src')) {
     /** Chemin stocké en BDD : uploads/cars/fichier.ext (ou anciennement seulement le nom du fichier). */
     function car_image_src(?string $stored): ?string

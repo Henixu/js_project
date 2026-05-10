@@ -57,10 +57,14 @@ final class EventAdminController extends Controller
                 if ($validation !== '') {
                     $error = $validation;
                 } else {
+                    $hotelId = $this->reservations->getHotelIdByName($old['hotel']);
+                    if ($hotelId === null) {
+                        $error = 'Veuillez choisir un hotel valide dans la liste.';
+                    } else {
                     if ($action === 'create') {
                         $this->events->create(
                             $old['titre'],
-                            $old['hotel'],
+                            $hotelId,
                             $old['chanteur'],
                             $old['date_debut'],
                             $old['date_fin'],
@@ -78,7 +82,7 @@ final class EventAdminController extends Controller
                         $this->events->update(
                             $id,
                             $old['titre'],
-                            $old['hotel'],
+                            $hotelId,
                             $old['chanteur'],
                             $old['date_debut'],
                             $old['date_fin'],
@@ -88,13 +92,14 @@ final class EventAdminController extends Controller
                         $_SESSION['flash_event_success'] = 'Evenement modifie avec succes.';
                         $this->redirect('events');
                     }
+                    }
                 }
             }
         }
 
         $editId = (int) ($_GET['edit'] ?? 0);
         $editingEvent = $editId > 0 ? $this->events->findById($editId) : null;
-        $hotels = array_keys($this->reservations->getTarifs());
+        $hotels = $this->reservations->getHotelNames();
 
         $this->view('event/index', [
             'success' => $success,
@@ -109,19 +114,19 @@ final class EventAdminController extends Controller
     private function getEventPayloadFromPost(): array
     {
         return [
-            'titre' => trim((string) ($_POST['titre'] ?? '')),
-            'hotel' => trim((string) ($_POST['hotel'] ?? '')),
-            'chanteur' => trim((string) ($_POST['chanteur'] ?? '')),
+            'titre' => trim(strip_tags((string) ($_POST['titre'] ?? ''))),
+            'hotel' => trim(strip_tags((string) ($_POST['hotel'] ?? ''))),
+            'chanteur' => trim(strip_tags((string) ($_POST['chanteur'] ?? ''))),
             'date_debut' => (string) ($_POST['date_debut'] ?? ''),
             'date_fin' => (string) ($_POST['date_fin'] ?? ''),
-            'description' => trim((string) ($_POST['description'] ?? '')),
-            'image_url' => trim((string) ($_POST['image_url'] ?? '')),
+            'description' => trim(strip_tags((string) ($_POST['description'] ?? ''))),
+            'image_url' => trim(strip_tags((string) ($_POST['image_url'] ?? ''))),
         ];
     }
 
     private function validatePayload(array $payload): string
     {
-        $allowedHotels = array_keys($this->reservations->getTarifs());
+        $allowedHotels = $this->reservations->getHotelNames();
 
         if (
             $payload['titre'] === '' ||

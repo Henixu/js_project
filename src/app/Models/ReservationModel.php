@@ -19,17 +19,49 @@ final class ReservationModel
 
     public function getTarifs(): array
     {
-        return [
-            'Seabel Rym Beach' => ['Standard' => 120, 'Superieure' => 160, 'Suite' => 250],
-            'Seabel Aladin' => ['Standard' => 90, 'Superieure' => 130, 'Suite' => 200],
-            'Seabel Alhambra' => ['Standard' => 150, 'Superieure' => 200, 'Suite' => 350],
+        $roomMultipliers = [
+            'Standard' => 1.0,
+            'Superieure' => 1.3,
+            'Suite' => 1.8,
         ];
+
+        $stmt = $this->pdo->query('SELECT nom, prix_nuit FROM hotels ORDER BY nom');
+        $hotels = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $tarifs = [];
+
+        foreach ($hotels as $hotel) {
+            $name = (string) ($hotel['nom'] ?? '');
+            $base = (float) ($hotel['prix_nuit'] ?? 0);
+            if ($name === '') {
+                continue;
+            }
+
+            foreach ($roomMultipliers as $room => $multiplier) {
+                $tarifs[$name][$room] = round($base * $multiplier, 2);
+            }
+        }
+
+        return $tarifs;
+    }
+
+    public function getHotelNames(): array
+    {
+        return $this->pdo->query('SELECT nom FROM hotels ORDER BY nom')->fetchAll(PDO::FETCH_COLUMN) ?: [];
+    }
+
+    public function getHotelIdByName(string $hotel): ?int
+    {
+        $stmt = $this->pdo->prepare('SELECT id FROM hotels WHERE nom = ? LIMIT 1');
+        $stmt->execute([$hotel]);
+
+        $id = $stmt->fetchColumn();
+        return $id === false ? null : (int) $id;
     }
 
     public function calculateTotal(string $hotel, string $chambre, string $arrivee, string $depart): array
     {
         $nuits = (new DateTime($arrivee))->diff(new DateTime($depart))->days;
-        $tarifNuit = $this->getTarifs()[$hotel][$chambre] ?? 100;
+        $tarifNuit = $this->getTarifs()[$hotel][$chambre] ?? 0;
 
         return [
             'nuits' => $nuits,
@@ -39,7 +71,7 @@ final class ReservationModel
 
     public function create(
         int $userId,
-        string $hotel,
+        int $hotelId,
         string $chambre,
         string $arrivee,
         string $depart,
@@ -47,14 +79,20 @@ final class ReservationModel
         float $prixTotal
     ): void {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO reservations (user_id, hotel, chambre, date_arrivee, date_depart, nb_personnes, prix_total) VALUES (?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO reservations (user_id, hotel_id, chambre, date_arrivee, date_depart, nb_personnes, prix_total) VALUES (?, ?, ?, ?, ?, ?, ?)'
         );
-        $stmt->execute([$userId, $hotel, $chambre, $arrivee, $depart, $nbPersonnes, $prixTotal]);
+        $stmt->execute([$userId, $hotelId, $chambre, $arrivee, $depart, $nbPersonnes, $prixTotal]);
     }
 
     public function findByUserId(int $userId): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM reservations WHERE user_id = ? ORDER BY created_at DESC');
+        $stmt = $this->pdo->prepare(
+            'SELECT r.*, COALESCE(h.nom, \'\') AS hotel
+             FROM reservations r
+             LEFT JOIN hotels h ON h.id = r.hotel_id
+             WHERE r.user_id = ?
+             ORDER BY r.created_at DESC'
+        );
         $stmt->execute([$userId]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -78,7 +116,14 @@ final class ReservationModel
 
     public function getLastConfirmedReservation(int $userId): ?array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM reservations WHERE user_id = ? AND statut = ? ORDER BY created_at DESC LIMIT 1');
+        $stmt = $this->pdo->prepare(
+            'SELECT r.*, COALESCE(h.nom, \'\') AS hotel
+             FROM reservations r
+             LEFT JOIN hotels h ON h.id = r.hotel_id
+             WHERE r.user_id = ? AND r.statut = ?
+             ORDER BY r.created_at DESC
+             LIMIT 1'
+        );
         $stmt->execute([$userId, 'confirmee']);
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -87,7 +132,13 @@ final class ReservationModel
 
     public function findConfirmedByUserId(int $userId): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM reservations WHERE user_id = ? AND statut = ? ORDER BY date_arrivee DESC');
+        $stmt = $this->pdo->prepare(
+            'SELECT r.*, COALESCE(h.nom, \'\') AS hotel
+             FROM reservations r
+             LEFT JOIN hotels h ON h.id = r.hotel_id
+             WHERE r.user_id = ? AND r.statut = ?
+             ORDER BY r.date_arrivee DESC'
+        );
         $stmt->execute([$userId, 'confirmee']);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -95,7 +146,12 @@ final class ReservationModel
 
     public function getConfirmedReservationById(int $userId, int $reservationId): ?array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM reservations WHERE user_id = ? AND id = ? AND statut = ?');
+        $stmt = $this->pdo->prepare(
+            'SELECT r.*, COALESCE(h.nom, \'\') AS hotel
+             FROM reservations r
+             LEFT JOIN hotels h ON h.id = r.hotel_id
+             WHERE r.user_id = ? AND r.id = ? AND r.statut = ?'
+        );
         $stmt->execute([$userId, $reservationId, 'confirmee']);
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -118,7 +174,10 @@ final class ReservationModel
     public function getReservationsByHotel(): array
     {
         return $this->pdo->query(
-            'SELECT hotel, COUNT(*) AS nb, SUM(prix_total) AS total FROM reservations GROUP BY hotel'
+            'SELECT COALESCE(h.nom, \'Inconnu\') AS hotel, COUNT(*) AS nb, SUM(r.prix_total) AS total
+             FROM reservations r
+             LEFT JOIN hotels h ON h.id = r.hotel_id
+             GROUP BY h.nom'
         )->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -142,9 +201,10 @@ final class ReservationModel
     public function findAllWithUser(): array
     {
         return $this->pdo->query(
-            'SELECT r.*, u.nom, u.prenom, u.email
+            'SELECT r.*, COALESCE(h.nom, \'\') AS hotel, u.nom, u.prenom, u.email
              FROM reservations r
              JOIN users u ON r.user_id = u.id
+             LEFT JOIN hotels h ON h.id = r.hotel_id
              ORDER BY r.created_at DESC'
         )->fetchAll(PDO::FETCH_ASSOC);
     }

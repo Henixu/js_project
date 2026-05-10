@@ -8,10 +8,24 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS hotels (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(150) NOT NULL,
+    ville VARCHAR(100) NOT NULL,
+    adresse VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_url VARCHAR(255),
+    etoiles INT DEFAULT 3,
+    prix_nuit DECIMAL(10,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_hotels_ville (ville),
+    INDEX idx_hotels_nom (nom)
+);
+
 CREATE TABLE IF NOT EXISTS reservations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    hotel VARCHAR(100) NOT NULL,
+    hotel_id INT NOT NULL,
     chambre VARCHAR(100) NOT NULL,
     date_arrivee DATE NOT NULL,
     date_depart DATE NOT NULL,
@@ -19,19 +33,26 @@ CREATE TABLE IF NOT EXISTS reservations (
     statut ENUM('en_attente', 'confirmee', 'annulee') DEFAULT 'en_attente',
     prix_total DECIMAL(10,2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    INDEX idx_reservations_hotel_id (hotel_id),
+    INDEX idx_reservations_user_status (user_id, statut),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS events (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(180) NOT NULL,
-    hotel VARCHAR(120) NOT NULL,
+    hotel_id INT NOT NULL,
     chanteur VARCHAR(120) NOT NULL,
     date_debut DATE NOT NULL,
     date_fin DATE NOT NULL,
     description TEXT NOT NULL,
     image_url VARCHAR(255) DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_events_hotel_id (hotel_id),
+    INDEX idx_events_date_debut (date_debut),
+    INDEX idx_events_date_fin (date_fin),
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS taxi_reservations (
@@ -77,6 +98,12 @@ CREATE TABLE IF NOT EXISTS car_rentals (
     FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE CASCADE
 );
 
+INSERT IGNORE INTO hotels (nom, ville, adresse, description, image_url, etoiles, prix_nuit)
+VALUES
+    ('Seabel Rym Beach', 'Djerba', 'Zone Touristique, Djerba', 'Hotel club en bord de mer avec animations et activites.', 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/vignette_seabel_rym-20.jpg', 4, 120.00),
+    ('Seabel Aladin', 'Djerba', 'Zone Touristique, Djerba', 'Hotel familial tout compris avec espaces piscine et loisirs.', 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/vignette_seabel_aladin-21.jpg', 3, 90.00),
+    ('Seabel Alhambra', 'Port El Kantaoui', 'Port El Kantaoui, Sousse', 'Resort spacieux avec golf, spa et services premium.', 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/vignette_seabel_alhambra-22.jpg', 4, 150.00);
+
 INSERT IGNORE INTO cars (marque, modele, type, portes, carburant, prix_par_jour, statut)
 VALUES
     ('Renault', 'Clio', 'economique', 5, 'essence', 35.00, 'disponible'),
@@ -86,3 +113,26 @@ VALUES
 -- Admin par défaut (mot de passe: admin123)
 INSERT IGNORE INTO users (nom, prenom, email, password, role)
 VALUES ('Admin', 'Seabel', 'admin@seabel.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+
+/*
+Migration base existante (a executer manuellement) :
+
+ALTER TABLE reservations ADD COLUMN hotel_id INT NULL AFTER user_id;
+UPDATE reservations r JOIN hotels h ON h.nom = r.hotel SET r.hotel_id = h.id;
+ALTER TABLE reservations MODIFY hotel_id INT NOT NULL;
+ALTER TABLE reservations DROP COLUMN hotel;
+ALTER TABLE reservations ADD CONSTRAINT fk_reservations_hotel_id
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+CREATE INDEX idx_reservations_hotel_id ON reservations (hotel_id);
+CREATE INDEX idx_reservations_user_status ON reservations (user_id, statut);
+
+ALTER TABLE events ADD COLUMN hotel_id INT NULL AFTER titre;
+UPDATE events e JOIN hotels h ON h.nom = e.hotel SET e.hotel_id = h.id;
+ALTER TABLE events MODIFY hotel_id INT NOT NULL;
+ALTER TABLE events DROP COLUMN hotel;
+ALTER TABLE events ADD CONSTRAINT fk_events_hotel_id
+    FOREIGN KEY (hotel_id) REFERENCES hotels(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+CREATE INDEX idx_events_hotel_id ON events (hotel_id);
+CREATE INDEX idx_events_date_debut ON events (date_debut);
+CREATE INDEX idx_events_date_fin ON events (date_fin);
+*/

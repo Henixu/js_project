@@ -8,6 +8,7 @@ use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\EventAdminController;
 use App\Controllers\EventController;
+use App\Controllers\SiteController;
 use App\Controllers\ReservationController;
 use App\Controllers\TaxiReservationController;
 use App\Controllers\CarController;
@@ -21,6 +22,7 @@ $reservationController = new ReservationController();
 $taxiController = new TaxiReservationController();
 $dashboardController = new DashboardController();
 $eventController = new EventController();
+$siteController = new SiteController();
 $eventAdminController = new EventAdminController();
 $carController = new CarController();
 $carRentalController = new CarRentalController();
@@ -90,6 +92,22 @@ $router->add('POST', 'events', static function () use ($eventAdminController): v
 
 $router->add('GET', 'events-feed', static function () use ($eventController): void {
     $eventController->feed();
+});
+
+$router->add('GET', 'home', static function () use ($siteController): void {
+    $siteController->home();
+});
+
+$router->add('GET', 'hotels', static function () use ($siteController): void {
+    $siteController->hotels();
+});
+
+$router->add('GET', 'hotel-details', static function () use ($siteController): void {
+    $siteController->hotelDetails();
+});
+
+$router->add('GET', 'events-public', static function () use ($siteController): void {
+    $siteController->events();
 });
 
 $router->add('GET', 'dashboard/taxis', static function () use ($dashboardController): void {
