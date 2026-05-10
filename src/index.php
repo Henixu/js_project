@@ -8,6 +8,7 @@ use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\EventAdminController;
 use App\Controllers\EventController;
+use App\Controllers\HotelAdminController;
 use App\Controllers\SiteController;
 use App\Controllers\ReservationController;
 use App\Controllers\TaxiReservationController;
@@ -23,6 +24,7 @@ $taxiController = new TaxiReservationController();
 $dashboardController = new DashboardController();
 $eventController = new EventController();
 $siteController = new SiteController();
+$hotelAdminController = new HotelAdminController();
 $eventAdminController = new EventAdminController();
 $carController = new CarController();
 $carRentalController = new CarRentalController();
@@ -92,6 +94,25 @@ $router->add('POST', 'events', static function () use ($eventAdminController): v
 
 $router->add('GET', 'events-feed', static function () use ($eventController): void {
     $eventController->feed();
+});
+
+$router->add('GET', 'admin/hotels', static function () use ($hotelAdminController): void {
+    $hotelAdminController->index();
+});
+$router->add('GET', 'admin/hotels/add', static function () use ($hotelAdminController): void {
+    $hotelAdminController->add();
+});
+$router->add('POST', 'admin/hotels/add', static function () use ($hotelAdminController): void {
+    $hotelAdminController->add();
+});
+$router->add('GET', 'admin/hotels/edit', static function () use ($hotelAdminController): void {
+    $hotelAdminController->edit();
+});
+$router->add('POST', 'admin/hotels/edit', static function () use ($hotelAdminController): void {
+    $hotelAdminController->edit();
+});
+$router->add('POST', 'admin/hotels/delete', static function () use ($hotelAdminController): void {
+    $hotelAdminController->delete();
 });
 
 $router->add('GET', 'home', static function () use ($siteController): void {

@@ -30,6 +30,65 @@ final class HotelModel
         return $this->addSlugs($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    public function create(
+        string $nom,
+        string $ville,
+        string $adresse,
+        ?string $description,
+        ?string $imageUrl,
+        int $etoiles,
+        ?float $prixNuit
+    ): void {
+        $stmt = $this->pdo->prepare(
+            'INSERT INTO hotels (nom, ville, adresse, description, image_url, etoiles, prix_nuit) VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+        $stmt->execute([$nom, $ville, $adresse, $description, $imageUrl, $etoiles, $prixNuit]);
+    }
+
+    public function findAll(): array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM hotels ORDER BY created_at DESC');
+        $stmt->execute();
+
+        return $this->addSlugs($stmt->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM hotels WHERE id = ?');
+        $stmt->execute([$id]);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$result) {
+            return null;
+        }
+
+        $result['slug'] = slugify((string) ($result['nom'] ?? ''));
+        return $result;
+    }
+
+    public function update(
+        int $id,
+        string $nom,
+        string $ville,
+        string $adresse,
+        ?string $description,
+        ?string $imageUrl,
+        int $etoiles,
+        ?float $prixNuit
+    ): void {
+        $stmt = $this->pdo->prepare(
+            'UPDATE hotels SET nom = ?, ville = ?, adresse = ?, description = ?, image_url = ?, etoiles = ?, prix_nuit = ? WHERE id = ?'
+        );
+        $stmt->execute([$nom, $ville, $adresse, $description, $imageUrl, $etoiles, $prixNuit, $id]);
+    }
+
+    public function delete(int $id): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM hotels WHERE id = ?');
+        $stmt->execute([$id]);
+    }
+
     public function getAll(?string $search, ?string $city, ?int $limit, ?int $offset): array
     {
         $params = [];
