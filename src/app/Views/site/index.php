@@ -7,7 +7,7 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seabel - Hotels & Resorts</title>
+    <title> Hotels & Resorts</title>
     <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('styles.css')) ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,17 +61,17 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
 
     <section class="about-section">
         <div class="container">
-            <div class="about-eyebrow">DECOUVREZ LES HOTELS SEABEL</div>
-            <h2 class="about-title">Seabel, si unique</h2>
+            <div class="about-eyebrow">DECOUVREZ LES HOTELS </div>
+            <h2 class="about-title">Bienvenue</h2>
             <div class="about-content">
-                <p>Nos hotels clubs se distinguent par leur qualite de service, leur confort et leur atmosphere conviviale. Chaque etablissement offre une experience unique tout en maintenant les standards d'excellence qui font notre reputation.</p>
-                <p>Que vous recherchiez la detente au bord de la mer, des activites sportives ou des moments de decouverte culturelle, nos hotels Seabel sauront repondre a toutes vos attentes pour des vacances inoubliables.</p>
+                <p>Notre site de booking vous permet de réserver vos séjours dans les meilleurs hotels.</p>
+                <p>Que vous recherchiez la detente au bord de la mer, des activites sportives ou des moments de decouverte culturelle, notre site vous propose une large selection d'hebergements pour tous les goûts et tous les budgets.</p>
                 <a href="hotels.php" class="about-link">Voir plus</a>
             </div>
         </div>
     </section>
 
-    <section class="events-section" id="events">
+    <!-- <section class="events-section" id="events">
         <div class="container">
             <div class="events-header">
                 <div class="events-eyebrow">PROGRAMMATION</div>
@@ -88,12 +88,12 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
             <button type="button" class="events-slider-arrow events-arrow-right" id="eventsNext" aria-label="Evenement suivant">›</button>
             <div class="events-slider-nav" id="eventsDots"></div>
         </div>
-    </section>
+    </section> -->
 
     <section class="hotels-showcase">
         <div class="hotel-panel panel-selection">
             <div class="panel-content">
-                <div class="selection-eyebrow">CHOISISSEZ VOTRE HOTEL SEABEL</div>
+                <div class="selection-eyebrow">CHOISISSEZ VOTRE HOTEL </div>
                 <h3 class="selection-title">Besoin de vacances ?</h3>
                 <p class="selection-text">Hotels clubs pour des sejours tout compris en famille ou entre amis. Choisissez votre destination et vivez des moments inoubliables.</p>
             </div>

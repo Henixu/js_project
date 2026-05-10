@@ -4,25 +4,7 @@ $footer_hotels = array_slice($nav_hotels, 0, 3);
 ?>
 <footer class="footer">
     <div class="footer-container">
-        <div class="footer-columns">
-            <div class="footer-column">
-                <?php foreach ($footer_hotels as $hotel): ?>
-                    <a href="hotel-details.php?slug=<?= htmlspecialchars((string) ($hotel['slug'] ?? '')) ?>"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></a>
-                <?php endforeach; ?>
-                <a href="#press">Presse & News</a>
-                <a href="#b2b">Portail B2B</a>
-            </div>
-            <div class="footer-column">
-                <a href="hotels.php">Nos hotels</a>
-                <a href="#media">Photos & Videos</a>
-                <a href="#protocol">Protocole sanitaire</a>
-            </div>
-            <div class="footer-column">
-                <a href="events.php">Evenements</a>
-                <a href="#contact">Contact</a>
-                <a href="reservation.php">Reserver</a>
-            </div>
-        </div>
+        
 
         <div class="footer-bottom">
             <form class="footer-form">
@@ -34,7 +16,7 @@ $footer_hotels = array_slice($nav_hotels, 0, 3);
             </form>
 
             <div class="footer-left">
-                <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="Seabel Hotels Tunisia" class="footer-logo">
+                <img src="" alt="Seabel Hotels Tunisia" class="footer-logo">
                 <div class="social-icons">
                     <a href="https://www.facebook.com/seabelhotels" class="social-icon">
                         <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
@@ -51,7 +33,8 @@ $footer_hotels = array_slice($nav_hotels, 0, 3);
                 </div>
             </div>
 
-            <div class="copyright">© 2025 SEABEL Hotels Tunisia</div>
+            
+
         </div>
     </div>
 </footer>

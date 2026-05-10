@@ -27,7 +27,7 @@ $nav_hotels = $nav_hotels ?? [];
         </div>
 
         <div class="header-center">
-            <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="seabel Hotels" class="logo">
+            <img src="https://www.01net.com/app/uploads/2024/05/Design-sans-titre162.jpg" alt="seabel Hotels" class="logo">
         </div>
 
         <div class="header-right">

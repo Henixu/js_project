@@ -25,7 +25,7 @@ $truncate = static function (string $text, int $max): string {
 <body>
     <?php include __DIR__ . '/../partials/site_header.php'; ?>
 
-    <main class="page-content">
+    <main class="page-content hotel-detail-page">
         <?php if ($hotel === null): ?>
             <section class="page-section">
                 <div class="container">
@@ -38,49 +38,87 @@ $truncate = static function (string $text, int $max): string {
             <?php
             $imageUrl = trim((string) ($hotel['image_url'] ?? ''));
             $heroStyle = $imageUrl !== '' ? " style=\"background-image: url('" . htmlspecialchars($imageUrl, ENT_QUOTES) . "')\"" : '';
+            $city = (string) ($hotel['ville'] ?? '');
+            $address = (string) ($hotel['adresse'] ?? '');
+            $stars = (int) ($hotel['etoiles'] ?? 0);
+            $priceValue = (float) ($hotel['prix_nuit'] ?? 0);
+            $priceLabel = $priceValue > 0 ? 'A partir de ' . number_format($priceValue, 0) . ' EUR / nuit' : 'Prix sur demande';
             ?>
-            <section class="page-hero page-hero-detail"<?= $heroStyle ?>>
+            <section class="page-hero page-hero-detail hotel-hero"<?= $heroStyle ?>>
                 <div class="page-hero-overlay"></div>
+                <div class="hero-gradient"></div>
+                <div class="hero-shapes" aria-hidden="true">
+                    <span class="hero-orb hero-orb-1"></span>
+                    <span class="hero-orb hero-orb-2"></span>
+                </div>
                 <div class="page-hero-inner">
-                    <p class="page-hero-eyebrow"><?= htmlspecialchars((string) ($hotel['ville'] ?? '')) ?></p>
-                    <h1 class="page-hero-title"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></h1>
-                    <div class="page-hero-meta">
-                        <span><?= (int) ($hotel['etoiles'] ?? 0) ?> etoiles</span>
-                        <span>•</span>
-                        <span>A partir de <?= number_format((float) ($hotel['prix_nuit'] ?? 0), 0) ?> EUR / nuit</span>
+                    <div class="hero-panel">
+                        <div class="hero-topline">
+                            <span class="hero-tag">Seabel Hotels</span>
+                            <?php if ($city !== ''): ?>
+                                <span class="hero-location"><?= htmlspecialchars($city) ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <h1 class="page-hero-title"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></h1>
+                        <div class="hero-chip-row">
+                            <span class="hero-chip"><?= $stars ?> etoiles</span>
+                            <span class="hero-chip"><?= htmlspecialchars($priceLabel) ?></span>
+                            <?php if ($address !== ''): ?>
+                                <span class="hero-chip hero-chip-wide">Adresse: <?= htmlspecialchars($address) ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="hero-actions">
+                            <a class="hero-cta" href="reservation.php">Reserver</a>
+                            <a class="hero-cta hero-cta-ghost" href="#hotel-events">Voir evenements</a>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section class="page-section">
+            <section class="page-section detail-section">
                 <div class="container">
                     <div class="hotel-detail-grid">
                         <div class="hotel-detail-main">
-                            <h2>Description</h2>
-                            <p><?= htmlspecialchars((string) ($hotel['description'] ?? '')) ?></p>
-                            <div class="hotel-detail-info">
-                                <div>
-                                    <strong>Adresse</strong>
-                                    <p><?= htmlspecialchars((string) ($hotel['adresse'] ?? '')) ?></p>
+                            <div class="detail-card detail-card-primary">
+                                <div class="detail-card-header">
+                                    <h2>Description</h2>
+                                    <span class="detail-card-tag">Confort & experience</span>
                                 </div>
-                                <div>
+                                <p class="detail-text"><?= htmlspecialchars((string) ($hotel['description'] ?? '')) ?></p>
+                            </div>
+                            <div class="detail-info-grid">
+                                <div class="detail-info-card">
+                                    <strong>Adresse</strong>
+                                    <p><?= htmlspecialchars($address) ?></p>
+                                </div>
+                                <div class="detail-info-card">
                                     <strong>Ville</strong>
-                                    <p><?= htmlspecialchars((string) ($hotel['ville'] ?? '')) ?></p>
+                                    <p><?= htmlspecialchars($city) ?></p>
+                                </div>
+                                <div class="detail-info-card">
+                                    <strong>Etoiles</strong>
+                                    <p><?= $stars ?> etoiles</p>
+                                </div>
+                                <div class="detail-info-card">
+                                    <strong>Prix</strong>
+                                    <p><?= htmlspecialchars($priceLabel) ?></p>
                                 </div>
                             </div>
                         </div>
-                        <div class="hotel-detail-card">
+                        <div class="hotel-detail-card booking-card">
                             <h3>Reserver ce sejour</h3>
                             <p>Choisissez vos dates et finalisez votre reservation en quelques clics.</p>
-                            <a class="hotel-card-link" href="reservation.php">Reserver maintenant</a>
+                            <div class="booking-price"><?= htmlspecialchars($priceLabel) ?></div>
+                            <a class="hero-cta" href="reservation.php">Reserver maintenant</a>
+                            <p class="booking-note">Confirmation rapide par notre equipe.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section class="page-section">
+            <section class="page-section detail-events" id="hotel-events">
                 <div class="container">
-                    <div class="section-header">
+                    <div class="section-header section-header-left">
                         <h2>Evenements a l'hotel</h2>
                         <p>Les animations et soirees a venir pour cet hotel.</p>
                     </div>
