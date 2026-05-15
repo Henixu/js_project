@@ -97,7 +97,6 @@ final class AuthController extends Controller
     public function logout(): void
     {
         session_destroy();
-        header('Location: ../index.html');
-        exit;
+        $this->redirect('home');
     }
 }

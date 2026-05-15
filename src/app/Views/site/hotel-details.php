@@ -31,7 +31,7 @@ $truncate = static function (string $text, int $max): string {
                 <div class="container">
                     <h1 class="page-hero-title">Hotel introuvable</h1>
                     <p class="page-hero-subtitle">Ce hotel n'existe pas ou n'est plus disponible.</p>
-                    <a class="hotel-card-link" href="hotels.php">Retour aux hotels</a>
+                    <a class="hotel-card-link" href="<?= htmlspecialchars(app_url('hotels')) ?>">Retour aux hotels</a>
                 </div>
             </section>
         <?php else: ?>
@@ -68,7 +68,7 @@ $truncate = static function (string $text, int $max): string {
                             <?php endif; ?>
                         </div>
                         <div class="hero-actions">
-                            <a class="hero-cta" href="reservation.php">Reserver</a>
+                            <a class="hero-cta" href="<?= htmlspecialchars(app_url('reservation')) ?>">Reserver</a>
                             <a class="hero-cta hero-cta-ghost" href="#hotel-events">Voir evenements</a>
                         </div>
                     </div>
@@ -109,7 +109,7 @@ $truncate = static function (string $text, int $max): string {
                             <h3>Reserver ce sejour</h3>
                             <p>Choisissez vos dates et finalisez votre reservation en quelques clics.</p>
                             <div class="booking-price"><?= htmlspecialchars($priceLabel) ?></div>
-                            <a class="hero-cta" href="reservation.php">Reserver maintenant</a>
+                            <a class="hero-cta" href="<?= htmlspecialchars(app_url('reservation')) ?>">Reserver maintenant</a>
                             <p class="booking-note">Confirmation rapide par notre equipe.</p>
                         </div>
                     </div>

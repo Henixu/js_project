@@ -1,5 +1,10 @@
 <?php
 $nav_hotels = $nav_hotels ?? [];
+$home_url = app_url('home');
+$hotels_url = app_url('hotels');
+$events_url = app_url('events-public');
+$hotel_details_base = app_url('hotel-details');
+$reservation_url = app_url('reservation');
 ?>
 <header class="header">
     <div class="header-container">
@@ -9,11 +14,11 @@ $nav_hotels = $nav_hotels ?? [];
             <nav class="side-menu">
                 <label for="menu-toggle" class="close-menu">&times;</label>
                 <ul>
-                    <li><a href="index.php">Accueil</a></li>
-                    <li><a href="hotels.php">Nos hotels</a></li>
-                    <li><a href="events.php">Evenements</a></li>
+                    <li><a href="<?= htmlspecialchars($home_url) ?>">Accueil</a></li>
+                    <li><a href="<?= htmlspecialchars($hotels_url) ?>">Nos hotels</a></li>
+                    <li><a href="<?= htmlspecialchars($events_url) ?>">Evenements</a></li>
                     <?php foreach ($nav_hotels as $hotel): ?>
-                        <li><a href="hotel-details.php?slug=<?= htmlspecialchars((string) ($hotel['slug'] ?? '')) ?>"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></a></li>
+                        <li><a href="<?= htmlspecialchars($hotel_details_base . '&slug=' . rawurlencode((string) ($hotel['slug'] ?? ''))) ?>"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></a></li>
                     <?php endforeach; ?>
                     <li><a href="#press">Presse & News</a></li>
                     <li><a href="#contact">Contact</a></li>
@@ -31,17 +36,17 @@ $nav_hotels = $nav_hotels ?? [];
         </div>
 
         <div class="header-right">
-            <a href="reservation.php" class="reserve-button">RESERVER</a>
+            <a href="<?= htmlspecialchars($reservation_url) ?>" class="reserve-button">RESERVER</a>
         </div>
     </div>
 
     <nav class="mobile-menu">
         <ul>
-            <li><a href="index.php">Accueil</a></li>
-            <li><a href="hotels.php">Nos hotels</a></li>
-            <li><a href="events.php">Evenements</a></li>
+            <li><a href="<?= htmlspecialchars($home_url) ?>">Accueil</a></li>
+            <li><a href="<?= htmlspecialchars($hotels_url) ?>">Nos hotels</a></li>
+            <li><a href="<?= htmlspecialchars($events_url) ?>">Evenements</a></li>
             <?php foreach ($nav_hotels as $hotel): ?>
-                <li><a href="hotel-details.php?slug=<?= htmlspecialchars((string) ($hotel['slug'] ?? '')) ?>"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></a></li>
+                <li><a href="<?= htmlspecialchars($hotel_details_base . '&slug=' . rawurlencode((string) ($hotel['slug'] ?? ''))) ?>"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></a></li>
             <?php endforeach; ?>
             <li><a href="#press">Presse & News</a></li>
             <li><a href="#media">Photos & Videos</a></li>

@@ -6,11 +6,13 @@ $search = (string) ($search ?? '');
 $selected_city = (string) ($selected_city ?? '');
 $page = (int) ($page ?? 1);
 $total_pages = (int) ($total_pages ?? 1);
+$hotels_base_url = app_url('hotels');
+$hotel_details_base = app_url('hotel-details');
 
 $search_value = htmlspecialchars($search, ENT_QUOTES);
 $selected_city_value = htmlspecialchars($selected_city, ENT_QUOTES);
 
-$buildLink = static function (int $targetPage) use ($search, $selected_city): string {
+$buildLink = static function (int $targetPage) use ($search, $selected_city, $hotels_base_url): string {
     $params = [];
     if ($search !== '') {
         $params['q'] = $search;
@@ -19,7 +21,7 @@ $buildLink = static function (int $targetPage) use ($search, $selected_city): st
         $params['ville'] = $selected_city;
     }
     $params['page'] = $targetPage;
-    return 'hotels.php?' . http_build_query($params);
+    return $hotels_base_url . '&' . http_build_query($params);
 };
 
 $truncate = static function (string $text, int $max): string {
@@ -55,7 +57,7 @@ $truncate = static function (string $text, int $max): string {
 
         <section class="page-section">
             <div class="container">
-                <form class="hotel-search" method="GET" action="hotels.php">
+                <form class="hotel-search" method="GET" action="<?= htmlspecialchars($hotels_base_url) ?>">
                     <input type="text" name="q" placeholder="Rechercher un hotel" value="<?= $search_value ?>">
                     <select name="ville">
                         <option value="">Toutes les villes</option>
@@ -67,7 +69,7 @@ $truncate = static function (string $text, int $max): string {
                         <?php endforeach; ?>
                     </select>
                     <button type="submit">Rechercher</button>
-                    <a class="hotel-search-reset" href="hotels.php">Reinitialiser</a>
+                    <a class="hotel-search-reset" href="<?= htmlspecialchars($hotels_base_url) ?>">Reinitialiser</a>
                 </form>
 
                 <?php if ($hotels === []): ?>
@@ -82,7 +84,7 @@ $truncate = static function (string $text, int $max): string {
                             $description = trim((string) ($hotel['description'] ?? ''));
                             ?>
                             <article class="hotel-card">
-                                <a class="hotel-card-media" href="hotel-details.php?slug=<?= htmlspecialchars($slug) ?>"<?= $bgStyle ?>></a>
+                                <a class="hotel-card-media" href="<?= htmlspecialchars($hotel_details_base . '&slug=' . rawurlencode($slug)) ?>"<?= $bgStyle ?>></a>
                                 <div class="hotel-card-body">
                                     <div class="hotel-card-top">
                                         <h3><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></h3>
@@ -94,7 +96,7 @@ $truncate = static function (string $text, int $max): string {
                                     <?php endif; ?>
                                     <div class="hotel-card-footer">
                                         <span class="hotel-card-price">A partir de <?= number_format((float) ($hotel['prix_nuit'] ?? 0), 0) ?> EUR / nuit</span>
-                                        <a href="hotel-details.php?slug=<?= htmlspecialchars($slug) ?>" class="hotel-card-link">Voir details</a>
+                                        <a href="<?= htmlspecialchars($hotel_details_base . '&slug=' . rawurlencode($slug)) ?>" class="hotel-card-link">Voir details</a>
                                     </div>
                                 </div>
                             </article>

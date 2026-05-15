@@ -66,7 +66,7 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
             <div class="about-content">
                 <p>Notre site de booking vous permet de réserver vos séjours dans les meilleurs hotels.</p>
                 <p>Que vous recherchiez la detente au bord de la mer, des activites sportives ou des moments de decouverte culturelle, notre site vous propose une large selection d'hebergements pour tous les goûts et tous les budgets.</p>
-                <a href="hotels.php" class="about-link">Voir plus</a>
+                <a href="<?= htmlspecialchars(app_url('hotels')) ?>" class="about-link">Voir plus</a>
             </div>
         </div>
     </section>
@@ -105,7 +105,7 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
             $bgStyle = $imageUrl !== '' ? " style=\"background-image: url('" . htmlspecialchars($imageUrl, ENT_QUOTES) . "')\"" : '';
             $panelClass = $panel_classes[$index] ?? 'panel-rym';
             ?>
-            <a href="hotel-details.php?slug=<?= htmlspecialchars((string) ($hotel['slug'] ?? '')) ?>" class="hotel-panel <?= htmlspecialchars($panelClass) ?>"<?= $bgStyle ?>>
+            <a href="<?= htmlspecialchars(app_url('hotel-details') . '&slug=' . rawurlencode((string) ($hotel['slug'] ?? ''))) ?>" class="hotel-panel <?= htmlspecialchars($panelClass) ?>"<?= $bgStyle ?>>
                 <div class="panel-content">
                     <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_sigle_blanc-10.svg" alt="Wave Logo" class="hotel-wave">
                     <h3 class="hotel-name"><?= nl2br(htmlspecialchars((string) ($hotel['nom'] ?? ''))) ?></h3>
@@ -123,6 +123,8 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
 
     <script>
         (function () {
+            const eventsFeedUrl = <?= json_encode(app_url('events-feed')) ?>;
+            const reservationUrl = <?= json_encode(app_url('reservation')) ?>;
             const slider = document.getElementById('eventsSlider');
             const slidesWrap = document.getElementById('eventsSlides');
             const prevBtn = document.getElementById('eventsPrev');
@@ -198,7 +200,7 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
                 });
             };
 
-            fetch('src/index.php?route=events-feed')
+            fetch(eventsFeedUrl)
                 .then(function (response) {
                     if (!response.ok) {
                         throw new Error('Impossible de charger les evenements.');
@@ -232,7 +234,7 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
                             + '<p class="event-slide-date">Du ' + escapeHtml(formatDate(eventItem.date_debut)) + ' au ' + escapeHtml(formatDate(eventItem.date_fin)) + '</p>'
                             + '<p class="event-slide-singer">Avec ' + escapeHtml(eventItem.chanteur) + '</p>'
                             + '<p class="event-slide-description">' + escapeHtml(truncate(eventItem.description, 170)) + '</p>'
-                            + '<a class="event-slide-cta" href="reservation.php?event_id=' + encodeURIComponent(eventItem.id) + '">RESERVER CET EVENEMENT</a>'
+                            + '<a class="event-slide-cta" href="' + reservationUrl + '&event_id=' + encodeURIComponent(eventItem.id) + '">RESERVER CET EVENEMENT</a>'
                             + '</div>'
                             + '</div>';
                     }).join('');
