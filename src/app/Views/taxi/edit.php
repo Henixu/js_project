@@ -14,6 +14,7 @@
         <div class="topbar-right">
             <span>Bonjour, <?= htmlspecialchars((string) ($_SESSION['prenom'] ?? 'Client')) ?></span>
             <a href="<?= htmlspecialchars(app_url('taxi')) ?>">Mes taxis</a>
+            <a href="<?= htmlspecialchars(app_url('profile')) ?>">Profil</a>
             <a href="<?= htmlspecialchars(app_url('logout')) ?>">Deconnexion</a>
         </div>
     </div>

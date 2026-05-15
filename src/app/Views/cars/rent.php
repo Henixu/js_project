@@ -22,6 +22,7 @@ $statut_labels = [
         <div class="topbar-right">
             <span>Bonjour, <?= htmlspecialchars((string) ($_SESSION['prenom'] ?? 'Client')) ?></span>
             <a href="<?= htmlspecialchars(app_url('reservation')) ?>">Réservations</a>
+            <a href="<?= htmlspecialchars(app_url('profile')) ?>">Profil</a>
             <a href="<?= htmlspecialchars(app_url('logout')) ?>">Déconnexion</a>
         </div>
     </header>

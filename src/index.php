@@ -55,6 +55,13 @@ $router->add('GET', 'logout', static function () use ($authController): void {
     $authController->logout();
 });
 
+$router->add('GET', 'profile', static function () use ($authController): void {
+    $authController->profile();
+});
+$router->add('POST', 'profile', static function () use ($authController): void {
+    $authController->profile();
+});
+
 $router->add('GET', 'reservation', static function () use ($reservationController): void {
     $reservationController->index();
 });
