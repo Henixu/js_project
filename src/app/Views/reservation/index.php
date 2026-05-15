@@ -31,12 +31,12 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Hotel</label>
-                        <select name="hotel" id="hotel" required>
-                            <option value="">-- Choisir un hotel --</option>
+                        <input type="text" name="hotel" id="hotel" list="hotel-list" required placeholder="Tapez le nom de l'hotel" value="<?= htmlspecialchars((string) ($selected_hotel ?? '')) ?>">
+                        <datalist id="hotel-list">
                             <?php foreach (array_keys($tarifs) as $hotelName): ?>
-                                <option value="<?= htmlspecialchars($hotelName) ?>"><?= htmlspecialchars($hotelName) ?></option>
+                                <option value="<?= htmlspecialchars($hotelName) ?>"></option>
                             <?php endforeach; ?>
-                        </select>
+                        </datalist>
                     </div>
                     <div class="form-group">
                         <label>Type de chambre</label>
@@ -131,8 +131,8 @@
         const departIn = document.getElementById('date_depart');
         const preview = document.getElementById('prixPreview');
 
-        hotelSel.addEventListener('change', () => {
-            const hotel = hotelSel.value;
+        function syncChambres() {
+            const hotel = hotelSel.value.trim();
             chambreSel.innerHTML = '<option value="">-- Choisir une chambre --</option>';
             if (tarifs[hotel]) {
                 Object.keys(tarifs[hotel]).forEach((ch) => {
@@ -140,7 +140,11 @@
                 });
             }
             updatePreview();
-        });
+        }
+
+        hotelSel.addEventListener('input', syncChambres);
+        hotelSel.addEventListener('change', syncChambres);
+        syncChambres();
 
         [chambreSel, arriveeIn, departIn].forEach((el) => el.addEventListener('change', updatePreview));
 

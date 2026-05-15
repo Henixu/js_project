@@ -81,10 +81,15 @@ $truncate = static function (string $text, int $max): string {
                             $imageUrl = trim((string) ($hotel['image_url'] ?? ''));
                             $bgStyle = $imageUrl !== '' ? " style=\"background-image: url('" . htmlspecialchars($imageUrl, ENT_QUOTES) . "')\"" : '';
                             $slug = (string) ($hotel['slug'] ?? '');
+                            $hotelId = (int) ($hotel['id'] ?? 0);
+                            $detailsUrl = $hotel_details_base . '&id=' . $hotelId;
+                            if ($slug !== '') {
+                                $detailsUrl .= '&slug=' . rawurlencode($slug);
+                            }
                             $description = trim((string) ($hotel['description'] ?? ''));
                             ?>
                             <article class="hotel-card">
-                                <a class="hotel-card-media" href="<?= htmlspecialchars($hotel_details_base . '&slug=' . rawurlencode($slug)) ?>"<?= $bgStyle ?>></a>
+                                <a class="hotel-card-media" href="<?= htmlspecialchars($detailsUrl) ?>"<?= $bgStyle ?>></a>
                                 <div class="hotel-card-body">
                                     <div class="hotel-card-top">
                                         <h3><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></h3>
@@ -96,7 +101,7 @@ $truncate = static function (string $text, int $max): string {
                                     <?php endif; ?>
                                     <div class="hotel-card-footer">
                                         <span class="hotel-card-price">A partir de <?= number_format((float) ($hotel['prix_nuit'] ?? 0), 0) ?> EUR / nuit</span>
-                                        <a href="<?= htmlspecialchars($hotel_details_base . '&slug=' . rawurlencode($slug)) ?>" class="hotel-card-link">Voir details</a>
+                                        <a href="<?= htmlspecialchars($detailsUrl) ?>" class="hotel-card-link">Voir details</a>
                                     </div>
                                 </div>
                             </article>

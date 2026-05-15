@@ -141,7 +141,7 @@ final class HotelModel
 
     public function findBySlug(string $slug): ?array
     {
-        $stmt = $this->pdo->query('SELECT id, nom, ville, adresse, description, image_url, etoiles, prix_nuit FROM hotels ORDER BY nom ASC');
+        $stmt = $this->pdo->query('SELECT id, nom, ville, adresse, description, image_url, etoiles, prix_nuit FROM hotels WHERE nom = :slug ORDER BY nom ASC');
         $hotels = $this->addSlugs($stmt->fetchAll(PDO::FETCH_ASSOC));
 
         foreach ($hotels as $hotel) {

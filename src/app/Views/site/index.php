@@ -104,8 +104,14 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
             $imageUrl = trim((string) ($hotel['image_url'] ?? ''));
             $bgStyle = $imageUrl !== '' ? " style=\"background-image: url('" . htmlspecialchars($imageUrl, ENT_QUOTES) . "')\"" : '';
             $panelClass = $panel_classes[$index] ?? 'panel-rym';
+            $hotelId = (int) ($hotel['id'] ?? 0);
+            $slug = (string) ($hotel['slug'] ?? '');
+            $detailsUrl = app_url('hotel-details') . '&id=' . $hotelId;
+            if ($slug !== '') {
+                $detailsUrl .= '&slug=' . rawurlencode($slug);
+            }
             ?>
-            <a href="<?= htmlspecialchars(app_url('hotel-details') . '&slug=' . rawurlencode((string) ($hotel['slug'] ?? ''))) ?>" class="hotel-panel <?= htmlspecialchars($panelClass) ?>"<?= $bgStyle ?>>
+            <a href="<?= htmlspecialchars($detailsUrl) ?>" class="hotel-panel <?= htmlspecialchars($panelClass) ?>"<?= $bgStyle ?>>
                 <div class="panel-content">
                     <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_sigle_blanc-10.svg" alt="Wave Logo" class="hotel-wave">
                     <h3 class="hotel-name"><?= nl2br(htmlspecialchars((string) ($hotel['nom'] ?? ''))) ?></h3>

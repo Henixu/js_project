@@ -60,8 +60,19 @@ final class SiteController extends Controller
 
     public function hotelDetails(): void
     {
-        $slug = trim((string) ($_GET['slug'] ?? ''));
-        $hotel = $slug !== '' ? $this->hotels->findBySlug($slug) : null;
+        $hotel = null;
+        $id = (int) ($_GET['id'] ?? 0);
+        if ($id > 0) {
+            $hotel = $this->hotels->findById($id);
+        }
+
+        if ($hotel === null) {
+            $slug = trim((string) ($_GET['slug'] ?? ''));
+            if ($slug !== '') {
+                $slug = slugify($slug);
+                $hotel = $this->hotels->findBySlug($slug);
+            }
+        }
 
         if ($hotel === null) {
             http_response_code(404);

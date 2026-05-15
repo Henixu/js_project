@@ -17,8 +17,16 @@ $reservation_url = app_url('reservation');
                     <li><a href="<?= htmlspecialchars($home_url) ?>">Accueil</a></li>
                     <li><a href="<?= htmlspecialchars($hotels_url) ?>">Nos hotels</a></li>
                     <li><a href="<?= htmlspecialchars($events_url) ?>">Evenements</a></li>
-                    <?php foreach ($nav_hotels as $hotel): ?>
-                        <li><a href="<?= htmlspecialchars($hotel_details_base . '&slug=' . rawurlencode((string) ($hotel['slug'] ?? ''))) ?>"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></a></li>
+                    <?php foreach ($nav_hotels as $navHotel): ?>
+                        <?php
+                        $hotelId = (int) ($navHotel['id'] ?? 0);
+                        $slug = (string) ($navHotel['slug'] ?? '');
+                        $detailsUrl = $hotel_details_base . '&id=' . $hotelId;
+                        if ($slug !== '') {
+                            $detailsUrl .= '&slug=' . rawurlencode($slug);
+                        }
+                        ?>
+                        <li><a href="<?= htmlspecialchars($detailsUrl) ?>"><?= htmlspecialchars((string) ($navHotel['nom'] ?? '')) ?></a></li>
                     <?php endforeach; ?>
                     <li><a href="#press">Presse & News</a></li>
                     <li><a href="#contact">Contact</a></li>
@@ -45,8 +53,16 @@ $reservation_url = app_url('reservation');
             <li><a href="<?= htmlspecialchars($home_url) ?>">Accueil</a></li>
             <li><a href="<?= htmlspecialchars($hotels_url) ?>">Nos hotels</a></li>
             <li><a href="<?= htmlspecialchars($events_url) ?>">Evenements</a></li>
-            <?php foreach ($nav_hotels as $hotel): ?>
-                <li><a href="<?= htmlspecialchars($hotel_details_base . '&slug=' . rawurlencode((string) ($hotel['slug'] ?? ''))) ?>"><?= htmlspecialchars((string) ($hotel['nom'] ?? '')) ?></a></li>
+            <?php foreach ($nav_hotels as $navHotel): ?>
+                <?php
+                $hotelId = (int) ($navHotel['id'] ?? 0);
+                $slug = (string) ($navHotel['slug'] ?? '');
+                $detailsUrl = $hotel_details_base . '&id=' . $hotelId;
+                if ($slug !== '') {
+                    $detailsUrl .= '&slug=' . rawurlencode($slug);
+                }
+                ?>
+                <li><a href="<?= htmlspecialchars($detailsUrl) ?>"><?= htmlspecialchars((string) ($navHotel['nom'] ?? '')) ?></a></li>
             <?php endforeach; ?>
             <li><a href="#press">Presse & News</a></li>
             <li><a href="#media">Photos & Videos</a></li>

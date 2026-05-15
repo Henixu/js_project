@@ -43,6 +43,11 @@ $truncate = static function (string $text, int $max): string {
             $stars = (int) ($hotel['etoiles'] ?? 0);
             $priceValue = (float) ($hotel['prix_nuit'] ?? 0);
             $priceLabel = $priceValue > 0 ? 'A partir de ' . number_format($priceValue, 0) . ' EUR / nuit' : 'Prix sur demande';
+            $hotelName = (string) ($hotel['nom'] ?? '');
+            $reservationUrl = app_url('reservation');
+            if ($hotelName !== '') {
+                $reservationUrl .= '&hotel=' . rawurlencode($hotelName);
+            }
             ?>
             <section class="page-hero page-hero-detail hotel-hero"<?= $heroStyle ?>>
                 <div class="page-hero-overlay"></div>
@@ -68,7 +73,7 @@ $truncate = static function (string $text, int $max): string {
                             <?php endif; ?>
                         </div>
                         <div class="hero-actions">
-                            <a class="hero-cta" href="<?= htmlspecialchars(app_url('reservation')) ?>">Reserver</a>
+                            <a class="hero-cta" href="<?= htmlspecialchars($reservationUrl) ?>">Reserver</a>
                             <a class="hero-cta hero-cta-ghost" href="#hotel-events">Voir evenements</a>
                         </div>
                     </div>
@@ -109,7 +114,7 @@ $truncate = static function (string $text, int $max): string {
                             <h3>Reserver ce sejour</h3>
                             <p>Choisissez vos dates et finalisez votre reservation en quelques clics.</p>
                             <div class="booking-price"><?= htmlspecialchars($priceLabel) ?></div>
-                            <a class="hero-cta" href="<?= htmlspecialchars(app_url('reservation')) ?>">Reserver maintenant</a>
+                            <a class="hero-cta" href="<?= htmlspecialchars($reservationUrl) ?>">Reserver maintenant</a>
                             <p class="booking-note">Confirmation rapide par notre equipe.</p>
                         </div>
                     </div>
