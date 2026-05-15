@@ -76,7 +76,7 @@ if (!function_exists('stars_image_url')) {
 }
 
 if (!function_exists('car_image_src')) {
-    /** Chemin stocké en BDD : uploads/cars/fichier.ext (ou anciennement seulement le nom du fichier). */
+    /** Chemin stocke en BDD : uploads/cars/fichier.ext (ou anciennement seulement le nom du fichier). */
     function car_image_src(?string $stored): ?string
     {
         if ($stored === null || $stored === '') {
@@ -86,6 +86,13 @@ if (!function_exists('car_image_src')) {
         $stored = str_replace('\\', '/', trim($stored));
         if ($stored !== '' && strpos($stored, '/') === false) {
             $stored = 'uploads/cars/' . $stored;
+        }
+
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '/src/index.php';
+        $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+        $stored = ltrim($stored, '/');
+        if (strpos($stored, 'src/') !== 0 && !preg_match('#/src$#', $basePath)) {
+            $stored = 'src/' . $stored;
         }
 
         return asset_url($stored);
