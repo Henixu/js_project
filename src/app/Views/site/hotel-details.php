@@ -18,6 +18,7 @@ $truncate = static function (string $text, int $max): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($hotel ? (string) $hotel['nom'] : 'Hotel introuvable') ?> - Seabel Hotels</title>
     <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('styles.css')) ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('favorites.css')) ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@300;400;700&display=swap" rel="stylesheet">
@@ -48,6 +49,7 @@ $truncate = static function (string $text, int $max): string {
             if ($hotelName !== '') {
                 $reservationUrl .= '&hotel=' . rawurlencode($hotelName);
             }
+            $hotelId = (int) ($hotel['id'] ?? 0);
             ?>
             <section class="page-hero page-hero-detail hotel-hero"<?= $heroStyle ?>>
                 <div class="page-hero-overlay"></div>
@@ -57,6 +59,11 @@ $truncate = static function (string $text, int $max): string {
                     <span class="hero-orb hero-orb-2"></span>
                 </div>
                 <div class="page-hero-inner">
+                    <?php if ($hotelId > 0): ?>
+                        <button type="button" class="favorite-toggle favorite-toggle-hero" data-favorite-toggle data-hotel-id="<?= $hotelId ?>" aria-pressed="false" title="Ajouter aux favoris">
+                            &#9733;
+                        </button>
+                    <?php endif; ?>
                     <div class="hero-panel">
                         <div class="hero-topline">
                             <span class="hero-tag">Seabel Hotels</span>

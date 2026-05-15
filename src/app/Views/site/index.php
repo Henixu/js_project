@@ -9,6 +9,7 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Hotels & Resorts</title>
     <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('styles.css')) ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('favorites.css')) ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@300;400;700&display=swap" rel="stylesheet">
@@ -112,6 +113,11 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
             }
             ?>
             <a href="<?= htmlspecialchars($detailsUrl) ?>" class="hotel-panel <?= htmlspecialchars($panelClass) ?>"<?= $bgStyle ?>>
+                <?php if ($hotelId > 0): ?>
+                    <button type="button" class="favorite-toggle" data-favorite-toggle data-hotel-id="<?= $hotelId ?>" aria-pressed="false" title="Ajouter aux favoris">
+                        &#9733;
+                    </button>
+                <?php endif; ?>
                 <div class="panel-content">
                     <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_sigle_blanc-10.svg" alt="Wave Logo" class="hotel-wave">
                     <h3 class="hotel-name"><?= nl2br(htmlspecialchars((string) ($hotel['nom'] ?? ''))) ?></h3>

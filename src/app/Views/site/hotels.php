@@ -39,6 +39,7 @@ $truncate = static function (string $text, int $max): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nos hotels - Seabel Hotels</title>
     <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('styles.css')) ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(asset_url('favorites.css')) ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@300;400;700&display=swap" rel="stylesheet">
@@ -89,6 +90,11 @@ $truncate = static function (string $text, int $max): string {
                             $description = trim((string) ($hotel['description'] ?? ''));
                             ?>
                             <article class="hotel-card">
+                                <?php if ($hotelId > 0): ?>
+                                    <button type="button" class="favorite-toggle" data-favorite-toggle data-hotel-id="<?= $hotelId ?>" aria-pressed="false" title="Ajouter aux favoris">
+                                        &#9733;
+                                    </button>
+                                <?php endif; ?>
                                 <a class="hotel-card-media" href="<?= htmlspecialchars($detailsUrl) ?>"<?= $bgStyle ?>></a>
                                 <div class="hotel-card-body">
                                     <div class="hotel-card-top">
