@@ -16,18 +16,18 @@ $footer_hotels = array_slice($nav_hotels, 0, 3);
             </form>
 
             <div class="footer-left">
-                <img src="" alt="Seabel Hotels Tunisia" class="footer-logo">
+                <img src="src\uploads\aa.png" alt="Seabel Hotels Tunisia" class="footer-logo">
                 <div class="social-icons">
-                    <a href="https://www.facebook.com/seabelhotels" class="social-icon">
+                    <a href="" class="social-icon">
                         <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
                     </a>
-                    <a href="https://x.com/seabelhotels" class="social-icon">
+                    <a href="" class="social-icon">
                         <img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="Twitter">
                     </a>
-                    <a href="https://www.instagram.com/seabelhotels/" class="social-icon">
+                    <a href="" class="social-icon">
                         <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram">
                     </a>
-                    <a href="https://www.youtube.com/channel/UCIEZ0wWvn6tGSqJVrfM0qOQ" class="social-icon">
+                    <a href="" class="social-icon">
                         <img src="https://cdn-icons-png.flaticon.com/512/733/733646.png" alt="YouTube">
                     </a>
                 </div>

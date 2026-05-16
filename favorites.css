@@ -125,6 +125,32 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.favorites-item {
+    position: relative;
+}
+
+.favorites-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    background: transparent;
+    color: var(--fav-ink);
+    font-size: 12px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.favorites-remove:hover {
+    background: rgba(0,0,0,0.06);
+}
+
 .favorites-item a::before {
     content: '*';
     position: absolute;

@@ -35,21 +35,7 @@ foreach ($nav_hotels as $navHotel) {
                 <ul>
                     <li><a href="<?= htmlspecialchars($home_url) ?>">Accueil</a></li>
                     <li><a href="<?= htmlspecialchars($hotels_url) ?>">Nos hotels</a></li>
-                    <li><a href="<?= htmlspecialchars($events_url) ?>">Evenements</a></li>
-                    <?php foreach ($nav_hotels as $navHotel): ?>
-                        <?php
-                        $hotelId = (int) ($navHotel['id'] ?? 0);
-                        $slug = (string) ($navHotel['slug'] ?? '');
-                        $detailsUrl = $hotel_details_base . '&id=' . $hotelId;
-                        if ($slug !== '') {
-                            $detailsUrl .= '&slug=' . rawurlencode($slug);
-                        }
-                        ?>
-                        <li><a href="<?= htmlspecialchars($detailsUrl) ?>"><?= htmlspecialchars((string) ($navHotel['nom'] ?? '')) ?></a></li>
-                    <?php endforeach; ?>
-                    <li><a href="#press">Presse & News</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="#protocol">Protocole sanitaire</a></li>
+                    
                 </ul>
             </nav>
             <label for="menu-toggle" class="menu-button">
@@ -187,19 +173,33 @@ foreach ($nav_hotels as $navHotel) {
                 if (listEl) {
                     listEl.innerHTML = '';
                     ids.forEach(function (id) {
-                        const item = hotelMap.get(String(id));
-                        if (!item) {
-                            return;
-                        }
+                            const item = hotelMap.get(String(id));
+                            if (!item) {
+                                return;
+                            }
 
-                        const li = document.createElement('li');
-                        li.className = 'favorites-item';
-                        const link = document.createElement('a');
-                        link.href = item.url;
-                        link.textContent = item.name || ('Hotel #' + id);
-                        li.appendChild(link);
-                        listEl.appendChild(li);
-                    });
+                            const li = document.createElement('li');
+                            li.className = 'favorites-item';
+
+                            const link = document.createElement('a');
+                            link.href = item.url;
+                            link.textContent = item.name || ('Hotel #' + id);
+                            li.appendChild(link);
+
+                            const removeBtn = document.createElement('button');
+                            removeBtn.type = 'button';
+                            removeBtn.className = 'favorites-remove';
+                            removeBtn.title = 'Retirer des favoris';
+                            removeBtn.textContent = '✕';
+                            removeBtn.addEventListener('click', function (ev) {
+                                ev.preventDefault();
+                                ev.stopPropagation();
+                                toggleFavorite(parseInt(id, 10));
+                            });
+                            li.appendChild(removeBtn);
+
+                            listEl.appendChild(li);
+                        });
                 }
 
                 if (emptyEl) {

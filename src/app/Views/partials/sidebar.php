@@ -1,6 +1,6 @@
 <aside class="sidebar">
     <div class="sidebar-logo">
-        <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_logo-11.svg" alt="Seabel">
+        <img src="src\uploads\aa.png" alt="bookingzat" style="width:120px; height:60px;">
         <p>Administration</p>
     </div>
     <nav>
