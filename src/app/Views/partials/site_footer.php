@@ -16,7 +16,7 @@ $footer_hotels = array_slice($nav_hotels, 0, 3);
             </form>
 
             <div class="footer-left">
-                <img src="src\uploads\aa.png" alt="Seabel Hotels Tunisia" class="footer-logo">
+                <img src="<?= htmlspecialchars(seabel_logo_url()) ?>" alt="Seabel Hotels Tunisia" class="footer-logo">
                 <div class="social-icons">
                     <a href="" class="social-icon">
                         <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">

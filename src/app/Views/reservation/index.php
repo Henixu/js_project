@@ -10,7 +10,7 @@
 </head>
 <body class="layout-seabel-client layout-seabel-reservation">
     <div class="topbar">
-        <img src="src\uploads\aa.png" alt="Seabel" style="width:100px; height:50px;">
+        <img src="<?= htmlspecialchars(seabel_logo_url()) ?>" alt="Seabel">
         <div class="topbar-right">
             <span>Bonjour, <?= htmlspecialchars((string) ($_SESSION['prenom'] ?? 'Client')) ?></span>
             <a href="<?= htmlspecialchars(app_url('profile')) ?>">Profil</a>

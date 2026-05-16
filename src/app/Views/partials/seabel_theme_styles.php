@@ -59,7 +59,8 @@ body.layout-seabel-client header.topbar {
 
 body.layout-seabel-client .topbar img,
 body.layout-seabel-client header.topbar img {
-    height: 35px;
+    height: 64px;
+    width: auto;
     filter: brightness(0) invert(1);
 }
 
@@ -122,7 +123,7 @@ body.layout-seabel-auth .logo-area {
     margin-bottom: 35px;
 }
 
-body.layout-seabel-auth .logo-area img { height: 50px; margin-bottom: 10px; }
+body.layout-seabel-auth .logo-area img { height: 85px; width: auto; margin-bottom: 10px; }
 
 body.layout-seabel-auth .logo-area h1 {
     font-family: 'Playfair Display', serif;
@@ -260,7 +261,7 @@ body.layout-seabel-auth .row {
 }
 
 .sidebar-logo { padding: 0 25px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-.sidebar-logo img { height: 35px; filter: brightness(0) invert(1); }
+.sidebar-logo img { height: 64px; width: auto; filter: brightness(0) invert(1); }
 .sidebar-logo p {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.5);

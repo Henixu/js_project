@@ -243,7 +243,8 @@ a {
 }
 
 .logo {
-    height: 70px;
+    height: 110px;
+    width: auto;
     display: block;
 }
 
@@ -527,7 +528,8 @@ a {
 }
 
 .slide-logo {
-    height: 80px;
+    height: 130px;
+    width: auto;
     margin-bottom: 30px;
 }
 
@@ -764,7 +766,8 @@ a {
 }
 
 .hotel-wave {
-    height: 60px;
+    height: 100px;
+    width: auto;
     margin-bottom: 24px;
 }
 
@@ -897,7 +900,8 @@ a {
 }
 
 .footer-logo {
-    height: 120px;
+    height: 190px;
+    width: auto;
     opacity: 0.7;
 }
 

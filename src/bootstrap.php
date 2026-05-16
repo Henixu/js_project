@@ -35,21 +35,44 @@ if (!function_exists('app_url')) {
     }
 }
 
-if (!function_exists('asset_url')) {
-    /**
-     * URL absolue (chemins du site) vers un fichier statique sous le dossier de index.php (ex. uploads/...).
-     */
-    function asset_url(string $path): string
+if (!function_exists('project_web_root')) {
+    function project_web_root(): string
     {
-        $path = ltrim(str_replace('\\', '/', $path), '/');
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '/src/index.php';
         $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
 
         if ($basePath === '' || $basePath === '.') {
+            return '';
+        }
+
+        if (preg_match('#/src$#', $basePath)) {
+            $root = preg_replace('#/src$#', '', $basePath);
+
+            return $root === '' ? '' : $root;
+        }
+
+        return $basePath;
+    }
+}
+
+if (!function_exists('asset_url')) {
+    function asset_url(string $path): string
+    {
+        $path = ltrim(str_replace('\\', '/', $path), '/');
+        $root = project_web_root();
+
+        if ($root === '') {
             return '/' . $path;
         }
 
-        return $basePath . '/' . $path;
+        return $root . '/' . $path;
+    }
+}
+
+if (!function_exists('seabel_logo_url')) {
+    function seabel_logo_url(): string
+    {
+        return asset_url('src/uploads/aa.png');
     }
 }
 
@@ -84,14 +107,22 @@ if (!function_exists('car_image_src')) {
         }
 
         $stored = str_replace('\\', '/', trim($stored));
-        if ($stored !== '' && strpos($stored, '/') === false) {
+        if ($stored === '') {
+            return null;
+        }
+
+        if (preg_match('#^https?://#i', $stored)) {
+            return $stored;
+        }
+
+        $stored = ltrim($stored, '/');
+        $stored = preg_replace('#^src/#', '', $stored) ?? $stored;
+
+        if (strpos($stored, '/') === false) {
             $stored = 'uploads/cars/' . $stored;
         }
 
-        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '/src/index.php';
-        $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
-        $stored = ltrim($stored, '/');
-        if (strpos($stored, 'src/') !== 0 && !preg_match('#/src$#', $basePath)) {
+        if (strpos($stored, 'uploads/') === 0) {
             $stored = 'src/' . $stored;
         }
 

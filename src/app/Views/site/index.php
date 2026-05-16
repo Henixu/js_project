@@ -32,7 +32,7 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
                 ?>
                 <div class="slide"<?= $bgStyle ?>>
                     <div class="slide-content">
-                        <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_sigle_blanc-10.svg" alt="Seabel" class="slide-logo">
+                        <img src="<?= htmlspecialchars(seabel_logo_url()) ?>" alt="Seabel" class="slide-logo">
                         <h1 class="slide-title">Le charme discret</h1>
                         <div class="slide-hotel"><?= htmlspecialchars($hotelName) ?></div>
                         <img src="<?= htmlspecialchars(stars_image_url($stars)) ?>" alt="Stars" class="stars">
@@ -119,7 +119,7 @@ $panel_classes = ['panel-rym', 'panel-aladin', 'panel-alhambra'];
                     </button>
                 <?php endif; ?>
                 <div class="panel-content">
-                    <img src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/bacaa8ed-efd0-432f-a0ac-5a712ea986ef-seabelhotels-com/assets/images/seabel_hotels_sigle_blanc-10.svg" alt="Wave Logo" class="hotel-wave">
+                    <img src="<?= htmlspecialchars(seabel_logo_url()) ?>" alt="Seabel" class="hotel-wave">
                     <h3 class="hotel-name"><?= nl2br(htmlspecialchars((string) ($hotel['nom'] ?? ''))) ?></h3>
                     <div class="hotel-location"><?= htmlspecialchars((string) ($hotel['ville'] ?? '')) ?></div>
                     <img src="<?= htmlspecialchars(stars_image_url((int) ($hotel['etoiles'] ?? 0))) ?>" alt="Stars" class="hotel-stars">

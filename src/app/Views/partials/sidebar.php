@@ -1,6 +1,6 @@
 <aside class="sidebar">
     <div class="sidebar-logo">
-        <img src="src\uploads\aa.png" alt="bookingzat" style="width:120px; height:60px;">
+        <img src="<?= htmlspecialchars(seabel_logo_url()) ?>" alt="Seabel">
         <p>Administration</p>
     </div>
     <nav>
